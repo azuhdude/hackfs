@@ -2,12 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="8cc7feb4-9881-4dd7-aced-10bf34e873f3" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/server/app.ja.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/web/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/web/package.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/web/public/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/web/public/index.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/web/src/services/3box.js" beforeDir="false" afterPath="$PROJECT_DIR$/web/src/services/3box.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/web/src/services/web3.js" beforeDir="false" afterPath="$PROJECT_DIR$/web/src/services/web3.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/web/yarn.lock" beforeDir="false" afterPath="$PROJECT_DIR$/web/yarn.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/web/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/web/.gitignore" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -61,7 +56,7 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1595107522117</updated>
-      <workItem from="1595107524540" duration="9175000" />
+      <workItem from="1595107524540" duration="9192000" />
     </task>
     <servers />
   </component>
