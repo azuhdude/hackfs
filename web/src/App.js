@@ -10,19 +10,24 @@ function App() {
     const [name, setName] = useState('')
     const [profile, setProfile] = useState({})
 
+    const refreshProfile = async () => {
+        const name = await getClient().public.get('name')
+        setProfile({...profile, name})
+    }
+
     useEffect(() => {
         (async () => {
             await connect()
             await connect3Box()
             await connectIpfs()
-            const name = await getClient().public.get('name')
-            setProfile({...profile, name})
+            await refreshProfile()
             setLoading(false)
         })()
     }, [])
 
     const saveName = async () => {
-        getClient().public.set('name', name)
+        await getClient().public.set('name', name)
+        await refreshProfile()
     }
 
     if (loading) {
