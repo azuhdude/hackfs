@@ -1,15 +1,22 @@
 import { getEthAddress, currentProvider } from "./web3"
-import Box from '3box'
 
-let box, space
+let user, space
+
+Error.stackTraceLimit=200
 
 export const connect = async () => {
-    console.log(`eth address`, await getEthAddress())
-    box = await Box.openBox(await getEthAddress(), currentProvider())
-    console.log('box is open')
-    await box.syncDone
-    console.log('creating space for user')
+    const Box = window.Box
+    const address = await getEthAddress() // await getEthAddress()
+    console.log(`eth address`, address)
+    const box = await Box.create(currentProvider())
+    console.log(box)
+    const spaces = [ 'hackfs-azuh']
+    await box.auth(spaces, { address })
+    console.log('open space')
     space = await box.openSpace('hackfs-azuh')
-    await space.syncDone
-    console.log('Done 3Box')
+
+    console.log('box is open')
 }
+
+//bafyreidf6mighwj445rmb3qdqnrkwokq2hvu6rfxk6em7j6uu2i2p4sfxm
+//bafyreiez6c4bfkflxgwetrlpzng3ki5cqk7ge6qtudyzs3cytv6vd5fbne

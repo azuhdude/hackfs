@@ -3,15 +3,13 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "3box": "^1.20.3",
     "@testing-library/jest-dom": "^4.2.4",
     "@testing-library/react": "^9.3.2",
     "@testing-library/user-event": "^7.1.2",
-    "ipfs": "0.48.0",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
     "react-scripts": "3.4.1",
-    "web3": "^1.2.10"
+    "web3": "^1.2.11"
   },
   "scripts": {
     "start": "react-scripts start",
@@ -21,6 +19,9 @@
   },
   "eslintConfig": {
     "extends": "react-app"
+  },
+  "resolutions": {
+    "libp2p-pubsub": "0.4.6"
   },
   "browserslist": {
     "production": [
