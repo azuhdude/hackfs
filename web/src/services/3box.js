@@ -19,3 +19,5 @@ export const connect = async () => {
 }
 
 export const getClient = () => box
+
+export const getSpace = () => space
