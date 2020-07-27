@@ -54,23 +54,23 @@ const request = {
     name: '',
 }
 
-const createCollections = async () => {
-    const {collections} = db
-    const existing = collections.get('Requests')
-    if (existing) {
-        return existing
-    } else {
-        return await db.newCollectionFromObject('Requests', request)
-    }
-}
-
-const newRequest = async (data) => {
-    const Request = db.collections.get('Request')
-    const req = new Request(data)
-    await req.save()
-}
-
-const getRequests = async () => {
-    const Request = db.collections.get('Request')
-    return await Request.find({})
-}
+// const createCollections = async () => {
+//     const {collections} = db
+//     const existing = collections.get('Requests')
+//     if (existing) {
+//         return existing
+//     } else {
+//         return await db.newCollectionFromObject('Requests', request)
+//     }
+// }
+//
+// const newRequest = async (data: any) => {
+//     const Request = db.collections.get('Request')
+//     const req = new Request(data)
+//     await req.save()
+// }
+//
+// const getRequests = async () => {
+//     const Request = db.collections.get('Request')
+//     return await Request.find({})
+// }
