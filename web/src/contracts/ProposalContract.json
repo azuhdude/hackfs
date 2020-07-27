@@ -1,0 +1,21 @@
+[
+  {
+    "type":"function",
+    "name":"listProposals",
+    "constant":true,
+    "payable":false,
+    "stateMutability":"view",
+    "inputs":[],
+    "outputs":[{"name":"","type":"address"}]
+  },
+  {
+    "type": "function",
+    "name": "proposeCreate",
+    "constant": false,
+    "payable": true,
+    "inputs": [{
+      "name": "ipfsDataAddress",
+      "type": "string"
+    }]
+  }
+]
