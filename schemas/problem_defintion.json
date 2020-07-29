@@ -1,6 +1,6 @@
 {
     "id": {"type": "string", "format": "uuid"},
-    "satement" : {
+    "statement" : {
         "short" : {"type": "string"},
         "long" : {"type": "string"}
     },
