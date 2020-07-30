@@ -16,6 +16,8 @@ const DataField = ({label, value}) => {
     </Box>
 }
 
+const modelAddresses = ['QmbRM4TfQuboPmsqHVPfycH7JavvEnMG4XFCXe5SVvRBQZ']
+
 export default () => {
     const history = useHistory()
     const { address } = useParams()
@@ -71,6 +73,12 @@ export default () => {
                     <IpfsUploader name={'model'} label={'Model File'} required/>
                     <Button label={'Submit Model'} type={'submit'} primary/>
                 </Form>
+                <Box width={'20px'} height={'20px'}/>
+                <Box gap={'small'} pad={'0 20px'}>
+                    <Heading level={2} margin={'none'}>Submitted Models</Heading>
+                    <Text>Trained models submitted for this training proposal</Text>
+                    {modelAddresses.map(addr => <DataField value={addr}/>)}
+                </Box>
             </Box>
         </Box>
     </Box>
