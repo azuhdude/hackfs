@@ -13,6 +13,8 @@ const testProposal = {
     address: 'some_address'
 }
 
+const realProposals = ['QmbRM4TfQuboPmsqHVPfycH7JavvEnMG4XFCXe5SVvRBQZ']
+
 export default () => {
     const [name, setName] = useState('')
     const [profile, setProfile] = useState({})
@@ -54,7 +56,7 @@ export default () => {
                 <Heading level={2}>
                     Active Proposals
                 </Heading>
-                <ProposalView proposal={testProposal} onClick={onClickProposal}/>
+                {realProposals.map(realProp => <ProposalView address={realProp} onClick={onClickProposal}/>)}
             </Box>
             <Box gridArea="center" background="light-2" >
                 <Heading level={2}>

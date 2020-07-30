@@ -31,6 +31,18 @@ export const downloadFile = async (address) => {
     return Buffer.concat(chunks).toString()
 }
 
+export const validateAddress = async (address) => {
+    console.log(`validating file from ${address}`)
+    try {
+        for await (const file of client.cat(address)) {
+            return true
+        }
+    } catch {
+    }
+
+    return false
+}
+
 export const downloadFiles = async (addresses) => {
     return await Promise.all(addresses.map(downloadFile))
 }

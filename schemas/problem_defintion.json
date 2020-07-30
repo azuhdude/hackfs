@@ -1,5 +1,13 @@
 {
     "id": {"type": "string", "format": "uuid"},
+    "name": {"type":  "string"},
+    "status": {
+        "type": "string",
+        "enum": ["pending", "completed"]
+    },
+    "bounty": {
+        "type": "number"
+    },
     "statement" : {
         "short" : {"type": "string"},
         "long" : {"type": "string"}
