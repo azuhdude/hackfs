@@ -13,7 +13,8 @@ performance against some evaluation dataset determines the share of the reward t
 
 
 ## Run
-
+To build the contract, execute `scripts/build_contract.sh`
+Ensure you have installed `truffle` and are running a local blockchain with `ganache`
 
 ### Debug
 

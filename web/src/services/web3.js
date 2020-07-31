@@ -14,7 +14,7 @@ let web3, contract
 
 export const connect = async () => {
     web3 = new Web3(Web3.givenProvider)
-    contract = new web3.eth.Contract(ProposalContract, contractAddress)
+    contract = new web3.eth.Contract(ProposalContract.abi, ProposalContract.networks["5777"].address)
 }
 
 export const currentProvider = () => Web3.givenProvider
@@ -24,4 +24,9 @@ export const getWeb3 = () => web3
 export const requestEthAddress = async () => (await web3.eth.requestAccounts())[0]
 
 export const getEthAddress = async () => (await web3.eth.getAccounts())[0]
+
+export const getProposals = async () => {
+    const proposalSize = await contract.methods.getProposalCount().call()
+    console.log("proposal size", proposalSize)
+}
 

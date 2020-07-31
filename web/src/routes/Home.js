@@ -1,10 +1,11 @@
 import ProposalForm from "../components/ProposalForm"
 import ProposalView from "../components/ProposalView"
-import React, {useState} from "react"
+import React, {useState, useEffect} from "react"
 import {uploadFile} from "../services/ipfs"
 import {getClient} from "../services/3box"
 import { Grid, Box, Heading, Header, Button} from 'grommet'
 import { useHistory } from 'react-router-dom'
+import { getProposals } from '../services/web3'
 
 const testProposal = {
     name: 'Some Proposal',
@@ -20,6 +21,10 @@ export default () => {
     const [profile, setProfile] = useState({})
     const [proposalAddress, setProposalAddress] = useState(null)
     const [downloadedProposal, setDownloadedProposal] = useState(null)
+
+    useEffect(() => {
+        getProposals()
+    })
 
     const history = useHistory()
 
