@@ -8,6 +8,7 @@ export const connect = async () => {
     client = await ipfs.create()
     console.log(`IPFS Version`, await client.version())
     console.log(`IPFS Config`, await client.config.getAll())
+    window.ipfsClient = client
 }
 
 export const uploadFile = async ({path, content}) => {
