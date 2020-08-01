@@ -1,0 +1,70 @@
+{
+    "id": {"type": "string", "format": "uuid"},
+    "name": {"type":  "string"},
+    "status": {
+        "type": "string",
+        "enum": ["pending", "completed"]
+    },
+    "bounty": {
+        "type": "number"
+    },
+    "statement" : {
+        "short" : {"type": "string"},
+        "long" : {"type": "string"}
+    },
+    "data": {
+        "type" : "object",
+        "train": {
+            "type": "object",
+            "x": {
+                "type": "object",
+                "path": {"type": "string", "format": "ipfs address"}
+            },
+            "y": {
+                "type": "object",
+                "path": {"type": "string", "format": "ipfs address"}
+            }
+        },
+        "test": {
+            "x": {
+                "type": "object",
+                "path": {"type": "string", "format": "ipfs address"}
+            },
+            "y": {
+                "type": "object",
+                "path": {"type": "string", "format": "ipfs address"}
+            }
+        },
+        "validation": {
+            "x": {
+                "type": "object",
+                "path": {"type": "string", "format": "ipfs address"}
+            },
+            "y": {
+                "type": "object",
+                "path": {"type": "string", "format": "ipfs address"}
+            }
+        }
+    },
+    "model_criteria": {
+        "acceptable_run_times": {
+            "type": "array",
+            "type_of": ["Docker", "ONNX", "TF2.0", "PyTorch" ]
+        }
+    },
+    "evaluation": {
+        "description": {"type": "string"},
+        "evaluation_script" : {
+            "type": "object",
+            "path": {"type": "string", "format": "ipfs address"}
+        },
+        "metrics" : {
+            "type": "array",
+            "contains": {
+                "mertic": {"type": "string"},
+                "justification": {"type": "string"}
+            }
+
+        }
+    }
+}
