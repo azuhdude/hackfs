@@ -7,6 +7,7 @@ contract ProposalContract {
     address sender;
     uint balance;
     mapping (address => Solution) solutions;
+    Solution[] solutionList;
   }
 
   struct Solution {
@@ -58,6 +59,7 @@ contract ProposalContract {
     // TODO: ensure bad actors cant submit same model from different addresses, or slightly tweaked model to get more rewards
     require(!_testEmptyString(proposals[ipfsDataAddress].solutions[msg.sender].ipfsSolutionAddress), "A solution already exists for this sender");
     proposals[ipfsDataAddress].solutions[msg.sender].ipfsSolutionAddress = ipfsSolutionAddress;
+    proposals[ipfsDataAddress].solutionList.push(proposals[ipfsDataAddress].solutions[msg.sender]);
   }
 
   function solutionUpdate(string memory ipfsDataAddress, string memory ipfsSolutionAddress) public {
@@ -73,6 +75,14 @@ contract ProposalContract {
 
   function getProposalCount() public view returns(uint) {
     return proposalList.length;
+  }
+
+  function getProposalSolutionCount(string memory ipfsDataAddress) public view returns(uint) {
+    return proposals[ipfsDataAddress].solutionList.length;
+  }
+
+  function getProposalSolution(string memory ipfsDataAddress, uint index) public view returns(string memory) {
+    return proposals[ipfsDataAddress].solutionList[index].ipfsSolutionAddress;
   }
 
   function _reward(string memory ipfsDataAddress) internal {

@@ -14,17 +14,18 @@ const testProposal = {
     address: 'some_address'
 }
 
-const realProposals = ['QmbRM4TfQuboPmsqHVPfycH7JavvEnMG4XFCXe5SVvRBQZ']
-
 export default () => {
     const [name, setName] = useState('')
     const [profile, setProfile] = useState({})
     const [proposalAddress, setProposalAddress] = useState(null)
     const [downloadedProposal, setDownloadedProposal] = useState(null)
+    const [proposals, setProposals] = useState([])
 
     useEffect(() => {
-        getProposals()
-    })
+        (async () => {
+            setProposals(await getProposals())
+        })()
+    }, [])
 
     const history = useHistory()
 
@@ -44,7 +45,7 @@ export default () => {
 
     return <>
         <Header pad={'medium'}>
-            <Heading>Machine Learning. Together.</Heading>
+            <Heading>Incentivized Machine Learning.</Heading>
             <Button primary label={'Submit a Proposal'} onClick={() => history.push('/newProposal')}/>
         </Header>
         <Grid
@@ -61,7 +62,7 @@ export default () => {
                 <Heading level={2}>
                     Active Proposals
                 </Heading>
-                {realProposals.map(realProp => <ProposalView address={realProp} onClick={onClickProposal}/>)}
+                {proposals.map(prop => <ProposalView address={prop} onClick={onClickProposal}/>)}
             </Box>
             <Box gridArea="center" background="light-2" >
                 <Heading level={2}>

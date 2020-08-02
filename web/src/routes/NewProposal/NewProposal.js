@@ -1,6 +1,7 @@
 import React, {useState, useRef, useEffect} from 'react'
 import {useHistory} from 'react-router-dom'
 import { uploadFile } from "../../services/ipfs"
+import { proposeCreate } from "../../services/web3"
 import { proposalToProblemSchema } from "../../utils"
 import IpfsUploader from '../../components/IpfsUploader'
 
@@ -21,6 +22,8 @@ export default () => {
         const schema = proposalToProblemSchema(data)
         const address = await uploadFile({content: JSON.stringify(schema)})
         console.log(`submitted proposal address ${address}`)
+        console.log('submitting proposal to contract', address, data.value)
+        await proposeCreate({address, value: data.value})
         setSubitting(false)
         history.push('/')
     }
