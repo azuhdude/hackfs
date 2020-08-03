@@ -3,16 +3,22 @@ pragma solidity >=0.5.16;
 contract ProposalContract {
   address public staker;
   string private message = "Hello World!!!";
+
   struct Proposal {
     address sender;
     uint balance;
+    uint status; // 1 = active, 0 = completed
+    uint endDateMS; // epoch date for the proposal to be ended automatically
     mapping (address => Solution) solutions;
     Solution[] solutionList;
   }
 
   struct Solution {
     uint reward;
+    uint score;
+    uint perf;
     string ipfsSolutionAddress;
+    address payable owner;
   }
 
   string[] public proposalList;
@@ -28,7 +34,8 @@ contract ProposalContract {
   function getMessage() public view returns(string memory){
     return message;
   }
-  function proposeCreate(string memory ipfsDataAddress) public payable {
+
+  function proposeCreate(string memory ipfsDataAddress, uint endDateMS) public payable {
 
     require(proposals[ipfsDataAddress].balance == 0, "There is already a proposal for that dataset");
     require(msg.value > 0, "Must stake some amount to create a proposal");
@@ -36,6 +43,9 @@ contract ProposalContract {
 
     proposals[ipfsDataAddress].sender = msg.sender;
     proposals[ipfsDataAddress].balance += msg.value;
+    proposals[ipfsDataAddress].status = 1;
+    proposals[ipfsDataAddress].endDateMS = endDateMS;
+
     proposalList.push(ipfsDataAddress);
 
     // Emits the event defined earlier
@@ -49,22 +59,41 @@ contract ProposalContract {
     emit ProposalUpdated(msg.sender, msg.value, ipfsDataAddress);
   }
 
-  function proposeEnd(string memory ipfsDataAddress) public {
-    require(msg.sender == proposals[ipfsDataAddress].sender, "Only the owner can end a proposal");
+  function _proposeEnd(string memory ipfsDataAddress) private {
+    proposals[ipfsDataAddress].status = 0;
     _reward(ipfsDataAddress);
   }
 
-  function solutionCreate(string memory ipfsDataAddress, string memory ipfsSolutionAddress) public {
+  function proposeEnd(string memory ipfsDataAddress) public {
+    require(msg.sender == proposals[ipfsDataAddress].sender, "Only the owner can end a proposal");
+    _proposeEnd(ipfsDataAddress);
+  }
+
+  function proposeDateEnd(string memory ipfsDataAddress) public {
+    require(proposals[ipfsDataAddress].balance > 0, "There is not an existing proposal for that dataset");
+    require(block.timestamp * 1000 > proposals[ipfsDataAddress].endDateMS, "Proposal is not yet over");
+    _proposeEnd(ipfsDataAddress);
+  }
+
+  function solutionCreate(string memory ipfsDataAddress, string memory ipfsSolutionAddress, uint score) public {
     // TODO: validation on IPFS address
     // TODO: ensure bad actors cant submit same model from different addresses, or slightly tweaked model to get more rewards
     require(!_testEmptyString(proposals[ipfsDataAddress].solutions[msg.sender].ipfsSolutionAddress), "A solution already exists for this sender");
+    require(proposals[ipfsDataAddress].balance > 0, "There is not an existing proposal for that dataset");
     proposals[ipfsDataAddress].solutions[msg.sender].ipfsSolutionAddress = ipfsSolutionAddress;
+    proposals[ipfsDataAddress].solutions[msg.sender].owner = msg.sender;
+    proposals[ipfsDataAddress].solutions[msg.sender].score = score;
     proposals[ipfsDataAddress].solutionList.push(proposals[ipfsDataAddress].solutions[msg.sender]);
   }
 
   function solutionUpdate(string memory ipfsDataAddress, string memory ipfsSolutionAddress) public {
     require(_testEmptyString(proposals[ipfsDataAddress].solutions[msg.sender].ipfsSolutionAddress), "A solution does not exist for this sender");
     proposals[ipfsDataAddress].solutions[msg.sender].ipfsSolutionAddress = ipfsSolutionAddress;
+  }
+
+  function solutionEvaluate(string memory ipfsDataAddress, uint score) public {
+    require(_testEmptyString(proposals[ipfsDataAddress].solutions[msg.sender].ipfsSolutionAddress), "A solution does not exist for this sender");
+    proposals[ipfsDataAddress].solutions[msg.sender].score = score;
   }
 
   function withdraw(string memory ipfsDataAddress) public {
@@ -81,12 +110,35 @@ contract ProposalContract {
     return proposals[ipfsDataAddress].solutionList.length;
   }
 
-  function getProposalSolution(string memory ipfsDataAddress, uint index) public view returns(string memory) {
-    return proposals[ipfsDataAddress].solutionList[index].ipfsSolutionAddress;
+  function getProposalSolution(string memory ipfsDataAddress, uint index) public view returns(string memory cid, uint score, address memory owner) {
+    return (
+      proposals[ipfsDataAddress].solutionList[index].ipfsSolutionAddress,
+      proposals[ipfsDataAddress].solutionList[index].score,
+      proposals[ipfsDataAddress].solutionList[index].owner
+    );
   }
 
   function _reward(string memory ipfsDataAddress) internal {
-      // TODO: figure out entire reward system
+    require(proposals[ipfsDataAddress].status == 1, "The proposal is already finished");
+
+    uint maxScore = 0;
+    uint totalPer = 0;
+
+    for (uint i = 0; i < proposals[ipfsDataAddress].solutionList.length; i++) {
+      if (proposals[ipfsDataAddress].solutionList[i].score > maxScore) {
+        maxScore = proposals[ipfsDataAddress].solutionList[i].score;
+      }
+    }
+
+    for (uint i = 0; i < proposals[ipfsDataAddress].solutionList.length; i++) {
+      proposals[ipfsDataAddress].solutionList[i].perf = proposals[ipfsDataAddress].solutionList[i].score * 1000 / maxScore;
+      totalPerf += proposals[ipfsDataAddress].solutionList[i].perf;
+    }
+
+    for (uint i = 0; i < proposals[ipfsDataAddress].solutionList.length; i++) {
+      uint reward = proposals[ipfsDataAddress].solutionList[i].perf / totalPerf * proposals[ipfsDataAddress].balance;
+      proposals[ipfsDataAddress].solutionList[i].perf.owner.transfer(reward);
+    }
   }
 
   function _testEmptyString(string memory anyString) pure internal returns(bool) {

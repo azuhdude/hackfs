@@ -1,4 +1,4 @@
-import React, {useState, useRef, useEffect} from 'react'
+import React, {useState } from 'react'
 import {useHistory} from 'react-router-dom'
 import { uploadFile } from "../../services/ipfs"
 import { proposeCreate } from "../../services/web3"
@@ -6,7 +6,7 @@ import { proposalToProblemSchema } from "../../utils"
 import IpfsUploader from '../../components/IpfsUploader'
 
 import styled from 'styled-components'
-import {Header, Heading, Box, Button, Form, TextInput, TextArea, FormField, Text} from "grommet"
+import {Header, Heading, Box, Button, Form, TextInput, TextArea, FormField, Text, DateInput} from "grommet"
 
 const LeftField = styled(FormField)`
     align-items: start;
@@ -18,12 +18,18 @@ export default () => {
     const [submitting, setSubitting] = useState(false)
 
     const onSubmit = async data => {
+        const submissionData = {
+            ...data,
+            endDateMS: (new Date(data.endDateMS)).getTime()
+        }
+        console.log(submissionData)
+
         setSubitting(true)
-        const schema = proposalToProblemSchema(data)
+        const schema = proposalToProblemSchema(submissionData)
         const address = await uploadFile({content: JSON.stringify(schema)})
         console.log(`submitted proposal address ${address}`)
-        console.log('submitting proposal to contract', address, data.value)
-        await proposeCreate({address, value: data.value})
+        console.log('submitting proposal to contract', address, submissionData.value)
+        await proposeCreate({address, value: submissionData.value, endDateMS: submissionData.endDateMS})
         setSubitting(false)
         history.push('/')
     }
@@ -46,6 +52,12 @@ export default () => {
                     </LeftField>
                     <LeftField label={'Description'}>
                         <TextArea name={'description'} required/>
+                    </LeftField>
+                    <LeftField label={'End Date'}>
+                        <DateInput
+                            format="mm/dd/yyyy"
+                            name='endDateMS'
+                        />
                     </LeftField>
                     <LeftField label={'Bounty Value (Wei)'}>
                         <TextInput name={'value'} type={'number'} required/>

@@ -1,24 +1,10 @@
-import ProposalForm from "../components/ProposalForm"
 import ProposalView from "../components/ProposalView"
 import React, {useState, useEffect} from "react"
-import {uploadFile} from "../services/ipfs"
-import {getClient} from "../services/3box"
 import { Grid, Box, Heading, Header, Button} from 'grommet'
 import { useHistory } from 'react-router-dom'
 import { getProposals } from '../services/web3'
 
-const testProposal = {
-    name: 'Some Proposal',
-    description: 'Some Description',
-    value: '4',
-    address: 'some_address'
-}
-
 export default () => {
-    const [name, setName] = useState('')
-    const [profile, setProfile] = useState({})
-    const [proposalAddress, setProposalAddress] = useState(null)
-    const [downloadedProposal, setDownloadedProposal] = useState(null)
     const [proposals, setProposals] = useState([])
 
     useEffect(() => {
@@ -28,16 +14,6 @@ export default () => {
     }, [])
 
     const history = useHistory()
-
-    const refreshProfile = async () => {
-        const name = await getClient().public.get('name')
-        setProfile({...profile, name})
-    }
-
-    const submitProposal = async (data) => {
-        const address = await uploadFile({content: JSON.stringify(data)})
-        setProposalAddress(address)
-    }
 
     const onClickProposal = (address) => {
         history.push(`/proposals/${address}`)
