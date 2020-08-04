@@ -60,7 +60,7 @@ export default () => {
                         />
                     </LeftField>
                     <LeftField label={'Bounty Value (ETH)'}>
-                        <TextInput name={'value'} type={'number'} required/>
+                        <TextInput name={'value'} type={'number'} step={'any'} required/>
                     </LeftField>
                 </Box>
                 <Box height={'800px'} width={'1px'} background={'dark-4'}/>

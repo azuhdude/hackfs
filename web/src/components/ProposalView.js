@@ -29,7 +29,7 @@ export default ({address, onClick}) => {
             <Text weight={'bold'}>Description</Text>
             <Text size={'small'} >{proposal.description}</Text>
             <Text weight={'bold'}>Prize Pool</Text>
-            <Text size={'small'} >{proposal.value}</Text>
+            <Text size={'small'} >{proposal.value} (ETH)</Text>
         </>
     }
 

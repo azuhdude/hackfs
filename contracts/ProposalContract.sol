@@ -28,10 +28,6 @@ contract ProposalContract {
   constructor() public {
   }
 
-  function getMessage() public view returns(string memory){
-    return message;
-  }
-
   function proposeCreate(string memory ipfsDataAddress, uint endDateMS) public payable {
 
     require(proposals[ipfsDataAddress].balance == 0, "There is already a proposal for that dataset");
@@ -76,6 +72,8 @@ contract ProposalContract {
     // TODO: ensure bad actors cant submit same model from different addresses, or slightly tweaked model to get more rewards
     require(!_testEmptyString(proposals[ipfsDataAddress].solutions[msg.sender].ipfsSolutionAddress), "A solution already exists for this sender");
     require(proposals[ipfsDataAddress].balance > 0, "There is not an existing proposal for that dataset");
+    require(proposals[ipfsDataAddress].score <= 100, "The score cannot be greater than 100");
+
     proposals[ipfsDataAddress].solutions[msg.sender].ipfsSolutionAddress = ipfsSolutionAddress;
     proposals[ipfsDataAddress].solutions[msg.sender].owner = msg.sender;
     proposals[ipfsDataAddress].solutions[msg.sender].score = score;

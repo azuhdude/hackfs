@@ -119,7 +119,7 @@ export default () => {
     const yourSolutions = sortedSolutions.filter(solution => solution.owner === getAddress())
     const theirSolutions = sortedSolutions.filter(solution => solution.owner !== getAddress())
 
-    const isOwner = owner !== getAddress()
+    const isOwner = owner === getAddress()
 
     return <Box gap={'medium'}>
         <Header background={'light-3'} pad={'medium'}>
@@ -157,7 +157,11 @@ export default () => {
                                 <IpfsUploader name={'model'} label={'Model File'} required/>
                                 <Box align={'start'} margin={'10px 0'} pad={'0 10px'}>
                                     <Text margin={'5px 0'}>Accuracy Score</Text>
-                                    <TextInput type='number' name={'accuracy'} required/>
+                                    <FormField validate={(value, {accuracy}) => {
+                                        return Number(accuracy) > 100 && 'Value cannot be higher than 100'
+                                    }}>
+                                        <TextInput type='number' name={'accuracy'} required/>
+                                    </FormField>
                                 </Box>
                                 <Button margin={'10px 0'} label={'Submit Model'} type={'submit'} primary/>
                             </Box>
