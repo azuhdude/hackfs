@@ -48,7 +48,7 @@ const SolutionTable = ({solutions, title, description, emptyText}) => {
                         Accuracy Score
                     </TableCell>
                     <TableCell scope="col" border="bottom">
-                        Expected Reward (Wei)
+                        Expected Reward (ETH)
                     </TableCell>
                     <TableCell scope="col" border="bottom">
                     </TableCell>
@@ -119,7 +119,7 @@ export default () => {
     const yourSolutions = sortedSolutions.filter(solution => solution.owner === getAddress())
     const theirSolutions = sortedSolutions.filter(solution => solution.owner !== getAddress())
 
-    const isOwner = owner === getAddress()
+    const isOwner = owner !== getAddress()
 
     return <Box gap={'medium'}>
         <Header background={'light-3'} pad={'medium'}>
@@ -130,7 +130,7 @@ export default () => {
             </Box>
             <Box align={'end'} pad={'medium'}>
                 <Heading color={'neutral-2'} level={3} margin={'none'}>Bounty Value:</Heading>
-                <Heading color={'neutral-2'} level={3}>{value} Wei</Heading>
+                <Heading color={'neutral-2'} level={3}>{value} ETH</Heading>
                 {isOwner && <Button primary label={'End Proposal'} onClick={endProposal}/>}
             </Box>
         </Header>

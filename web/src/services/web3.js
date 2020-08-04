@@ -7,17 +7,21 @@ export const ethEnabled = () => {
     return !!Web3.givenProvider
 }
 
-
 let web3, contract, address
 
 export const connect = async () => {
     web3 = new Web3(Web3.givenProvider)
+    await requestAccounts()
     contract = new web3.eth.Contract(ProposalContract.abi, ProposalContract.networks[network].address, {
         from: await getEthAddress()
     })
 }
 
 export const currentProvider = () => Web3.givenProvider
+
+export const requestAccounts = async () => {
+    await web3.eth.requestAccounts()
+}
 
 export const getEthAddress = async () => {
     if (address) return address
@@ -63,10 +67,10 @@ export const getProposalSubmissions = async (cid) => {
 }
 
 export const proposeCreate = async ({address, value, endDateMS}) => {
-    console.log(value)
+    console.log('sending value', value)
     await contract.methods.proposeCreate(address, endDateMS).send({
         from: await getEthAddress(),
-        value: `${value}`
+        value: web3.utils.toWei(value, 'eth')
     })
 }
 

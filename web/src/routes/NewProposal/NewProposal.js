@@ -59,7 +59,7 @@ export default () => {
                             name='endDateMS'
                         />
                     </LeftField>
-                    <LeftField label={'Bounty Value (Wei)'}>
+                    <LeftField label={'Bounty Value (ETH)'}>
                         <TextInput name={'value'} type={'number'} required/>
                     </LeftField>
                 </Box>
