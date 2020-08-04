@@ -20,6 +20,7 @@ contract ProposalContract {
 
   string[] public proposalList;
   mapping (string => Proposal) public proposals;
+  mapping (address => string[]) public solutionsForAddr;
 
   event ProposalCreated(address from, uint amount, string ipfsDataAddress);
   event ProposalUpdated(address from, uint amount, string ipfsDataAddress);
@@ -53,7 +54,7 @@ contract ProposalContract {
 
   function _proposeEnd(string memory ipfsDataAddress) private {
     proposals[ipfsDataAddress].status = 0;
-    _reward(ipfsDataAddress);
+//    _reward(ipfsDataAddress);
   }
 
   function proposeEnd(string memory ipfsDataAddress) public {
@@ -72,12 +73,13 @@ contract ProposalContract {
     // TODO: ensure bad actors cant submit same model from different addresses, or slightly tweaked model to get more rewards
     require(!_testEmptyString(proposals[ipfsDataAddress].solutions[msg.sender].ipfsSolutionAddress), "A solution already exists for this sender");
     require(proposals[ipfsDataAddress].balance > 0, "There is not an existing proposal for that dataset");
-    require(proposals[ipfsDataAddress].score <= 100, "The score cannot be greater than 100");
+    require(score <= 100, "The score cannot be greater than 100");
 
     proposals[ipfsDataAddress].solutions[msg.sender].ipfsSolutionAddress = ipfsSolutionAddress;
     proposals[ipfsDataAddress].solutions[msg.sender].owner = msg.sender;
     proposals[ipfsDataAddress].solutions[msg.sender].score = score;
     proposals[ipfsDataAddress].solutionList.push(proposals[ipfsDataAddress].solutions[msg.sender]);
+    solutionsForAddr[msg.sender].push(ipfsDataAddress);
   }
 
   function solutionUpdate(string memory ipfsDataAddress, string memory ipfsSolutionAddress) public {
@@ -88,6 +90,10 @@ contract ProposalContract {
   function solutionEvaluate(string memory ipfsDataAddress, uint score) public {
     require(_testEmptyString(proposals[ipfsDataAddress].solutions[msg.sender].ipfsSolutionAddress), "A solution does not exist for this sender");
     proposals[ipfsDataAddress].solutions[msg.sender].score = score;
+  }
+
+  function getSolutionsForAddressLength() public view returns(uint) {
+    return solutionsForAddr[msg.sender].length;
   }
 
   function withdraw(string memory ipfsDataAddress) public {
@@ -132,6 +138,7 @@ contract ProposalContract {
     for (uint i = 0; i < proposals[ipfsDataAddress].solutionList.length; i++) {
       uint reward = (proposals[ipfsDataAddress].solutionList[i].perf / totalPerf) * proposals[ipfsDataAddress].balance;
       proposals[ipfsDataAddress].solutionList[i].owner.transfer(reward);
+      proposals[ipfsDataAddress].solutions[proposals[ipfsDataAddress].solutionList[i].owner].reward = reward;
     }
   }
 

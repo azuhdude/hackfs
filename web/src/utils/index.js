@@ -33,7 +33,7 @@ export const problemSchemaToProposal = (data) => {
     return {
         name: data.name,
         description: data.statement.short,
-        endDateMS: data.endDateMS,
+        endDateMS: data.endDate,
         value: data.bounty,
         trainX: data.data.train.x.path,
         trainY: data.data.train.x.path,

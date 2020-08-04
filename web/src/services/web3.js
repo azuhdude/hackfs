@@ -85,3 +85,19 @@ export const endProposalDate = async (address) => {
 export const submitSolution = async ({problemCid, solutionCid, accuracy}) => {
     await contract.methods.solutionCreate(problemCid, solutionCid, accuracy).send()
 }
+
+export const getSolutionsForAddress = async() => {
+    const solutionsSize = await contract.methods.getSolutionsForAddressLength().call()
+    const solutionProposalAddresses = []
+    console.log('solution size', solutionsSize)
+
+    for (let i = 0; i < solutionsSize; i++) {
+        const cid = await contract.methods.solutionsForAddr(address, i).call()
+        solutionProposalAddresses.push({
+            ...await contract.methods.proposals(cid).call(),
+            cid
+        })
+    }
+
+    return solutionProposalAddresses
+}

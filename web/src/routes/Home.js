@@ -2,16 +2,19 @@ import ProposalView from "../components/ProposalView"
 import React, {useState, useEffect} from "react"
 import { Grid, Box, Heading, Header, Button} from 'grommet'
 import { useHistory } from 'react-router-dom'
-import { getProposals } from '../services/web3'
+import { getProposals, getSolutionsForAddress } from '../services/web3'
 
 export default () => {
     const [proposals, setProposals] = useState([])
+    const [solutions, setSolutions] = useState([])
 
     useEffect(() => {
         (async () => {
             setProposals(await getProposals())
+            setSolutions(await getSolutionsForAddress())
         })()
     }, [])
+
 
     const history = useHistory()
 
@@ -21,6 +24,8 @@ export default () => {
 
     const activeProposals = proposals.filter(proposal => proposal.status === "1")
     const inactiveProposals = proposals.filter(proposal => proposal.status === "0")
+
+    console.log('solutions', solutions)
 
     return <>
         <Header pad={'medium'}>
@@ -53,6 +58,7 @@ export default () => {
                 <Heading level={2}>
                     Your Submitted Models
                 </Heading>
+                {solutions.map(prop => <ProposalView address={prop.cid} onClick={onClickProposal}/>)}
             </Box>
         </Grid>
     </>

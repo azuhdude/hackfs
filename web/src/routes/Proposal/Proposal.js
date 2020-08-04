@@ -88,11 +88,12 @@ export default () => {
 
     const endProposal = async () => {
         await endProposalOwner(address)
+        history.push('/')
     }
 
     if (loading) return <h1>Loading...</h1>
 
-    const { name, description, value, trainX, trainY, validateX, validateY } = proposal
+    const { name, description, endDateMS, value, trainX, trainY, validateX, validateY } = proposal
 
     const sortedSolutions = solutions.sort((a, b) => a.score > b.score ? 1 : -1)
 
@@ -119,7 +120,7 @@ export default () => {
     const yourSolutions = sortedSolutions.filter(solution => solution.owner === getAddress())
     const theirSolutions = sortedSolutions.filter(solution => solution.owner !== getAddress())
 
-    const isOwner = owner === getAddress()
+    const isOwner = owner !== getAddress()
 
     return <Box gap={'medium'}>
         <Header background={'light-3'} pad={'medium'}>
@@ -131,6 +132,8 @@ export default () => {
             <Box align={'end'} pad={'medium'}>
                 <Heading color={'neutral-2'} level={3} margin={'none'}>Bounty Value:</Heading>
                 <Heading color={'neutral-2'} level={3}>{value} ETH</Heading>
+                <Text weight={'bold'}>Ends On: {(new Date(endDateMS)).toLocaleString()}</Text>
+                <Box height={'10px'} width={'10px'}/>
                 {isOwner && <Button primary label={'End Proposal'} onClick={endProposal}/>}
             </Box>
         </Header>

@@ -4,8 +4,7 @@ import {downloadFile} from "../services/ipfs"
 import Card from './Card'
 import { problemSchemaToProposal} from "../utils"
 
-export default ({address, solutionView, onClick}) => {
-    console.log(address)
+export default ({address, onClick}) => {
     const [loading, setLoading] = useState(true)
     const [proposal, setProposal] = useState(null)
 
@@ -25,23 +24,17 @@ export default ({address, solutionView, onClick}) => {
         contents = <Text>Loading...</Text>
     } else {
         contents = <>
-            <Text weight={'bold'}>{solutionView ? 'Proposal ' : ''}Name</Text>
+            <Text weight={'bold'}>Proposal Name</Text>
             <Text size={'small'} >{proposal.name}</Text>
-            {!solutionView && <>
-                <Text weight={'bold'}>Description</Text>
-                <Text size={'small'} >{proposal.description}</Text>
-                <Text weight={'bold'}>Prize Pool</Text>
-                <Text size={'small'} >{proposal.value} (ETH)</Text>
-            </>}
-            {solutionView && <>
-                <Text weight={'bold'}>Status</Text>
-                <Text size={'small'} >{proposal.status === 1 ? 'Active' : 'Completed'}</Text>
-            </>}
+            <Text weight={'bold'}>Accuracy</Text>
+            <Text size={'small'} >{proposal.description}</Text>
+            <Text weight={'bold'}>Prize Pool</Text>
+            <Text size={'small'} >{proposal.value} (ETH)</Text>
         </>
     }
 
     return <Card height={'150px'} align={"start"} pad={'small'} background={'light-1'}
-                    onClick={() => onClick(address)}>
+                 onClick={() => onClick(address)}>
         {contents}
     </Card>
 }
