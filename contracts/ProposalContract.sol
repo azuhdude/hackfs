@@ -1,9 +1,6 @@
 pragma solidity >=0.5.16;
 
 contract ProposalContract {
-  address public staker;
-  string private message = "Hello World!!!";
-
   struct Proposal {
     address sender;
     uint balance;
@@ -39,7 +36,6 @@ contract ProposalContract {
 
     require(proposals[ipfsDataAddress].balance == 0, "There is already a proposal for that dataset");
     require(msg.value > 0, "Must stake some amount to create a proposal");
-    // TODO: validation on IPFS address
 
     proposals[ipfsDataAddress].sender = msg.sender;
     proposals[ipfsDataAddress].balance += msg.value;
@@ -110,7 +106,7 @@ contract ProposalContract {
     return proposals[ipfsDataAddress].solutionList.length;
   }
 
-  function getProposalSolution(string memory ipfsDataAddress, uint index) public view returns(string memory cid, uint score, address memory owner) {
+  function getProposalSolution(string memory ipfsDataAddress, uint index) public view returns(string memory cid, uint score, address owner) {
     return (
       proposals[ipfsDataAddress].solutionList[index].ipfsSolutionAddress,
       proposals[ipfsDataAddress].solutionList[index].score,
@@ -122,7 +118,7 @@ contract ProposalContract {
     require(proposals[ipfsDataAddress].status == 1, "The proposal is already finished");
 
     uint maxScore = 0;
-    uint totalPer = 0;
+    uint totalPerf = 0;
 
     for (uint i = 0; i < proposals[ipfsDataAddress].solutionList.length; i++) {
       if (proposals[ipfsDataAddress].solutionList[i].score > maxScore) {
@@ -136,8 +132,8 @@ contract ProposalContract {
     }
 
     for (uint i = 0; i < proposals[ipfsDataAddress].solutionList.length; i++) {
-      uint reward = proposals[ipfsDataAddress].solutionList[i].perf / totalPerf * proposals[ipfsDataAddress].balance;
-      proposals[ipfsDataAddress].solutionList[i].perf.owner.transfer(reward);
+      uint reward = (proposals[ipfsDataAddress].solutionList[i].perf / totalPerf) * proposals[ipfsDataAddress].balance;
+      proposals[ipfsDataAddress].solutionList[i].owner.transfer(reward);
     }
   }
 

@@ -66,7 +66,7 @@ export default () => {
                 <Box height={'800px'} width={'1px'} background={'dark-4'}/>
                 <Box>
                     <Box gap={'medium'}>
-                        <Box>
+                        <Box align={'center'}>
                             <Heading level={2} margin={'none'}>Problem Set Data</Heading>
                             <Text margin={'10px'}>Upload the problem set data. You can also paste an IPFS address</Text>
                         </Box>

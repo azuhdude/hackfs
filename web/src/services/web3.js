@@ -30,13 +30,17 @@ export const getAddress = () => address
 export const getProposals = async () => {
     const proposalSize = await contract.methods.getProposalCount().call()
 
-    const cids = []
+    const proposals = []
     for (let i = 0; i < proposalSize; i++) {
-        cids.push(await contract.methods.proposalList(i).call())
+        const cid = await contract.methods.proposalList(i).call()
+        proposals.push({
+            ...await contract.methods.proposals(cid).call(),
+            cid
+        })
     }
     console.log("proposal size", proposalSize)
-    console.log("proposals", cids)
-    return cids
+    console.log("proposals", proposals)
+    return proposals
 }
 
 export const getProposalOwner = async (cid) => {
@@ -62,7 +66,7 @@ export const proposeCreate = async ({address, value, endDateMS}) => {
     console.log(value)
     await contract.methods.proposeCreate(address, endDateMS).send({
         from: await getEthAddress(),
-        value
+        value: `${value}`
     })
 }
 

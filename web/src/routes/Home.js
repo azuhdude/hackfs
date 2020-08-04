@@ -19,6 +19,9 @@ export default () => {
         history.push(`/proposals/${address}`)
     }
 
+    const activeProposals = proposals.filter(proposal => proposal.status === "1")
+    const inactiveProposals = proposals.filter(proposal => proposal.status === "0")
+
     return <>
         <Header pad={'medium'}>
             <Heading>Incentivized Machine Learning.</Heading>
@@ -34,18 +37,19 @@ export default () => {
                 { name: 'right', start: [2, 0], end: [2, 0] },
             ]}
         >
-            <Box gridArea="left" background="light-2" >
+            <Box gridArea="left" align={'center'} background="light-2" >
                 <Heading level={2}>
                     Active Proposals
                 </Heading>
-                {proposals.map(prop => <ProposalView address={prop} onClick={onClickProposal}/>)}
+                {activeProposals.map(prop => <ProposalView address={prop.cid} onClick={onClickProposal}/>)}
             </Box>
-            <Box gridArea="center" background="light-2" >
+            <Box gridArea="center" align={'center'} background="light-2" >
                 <Heading level={2}>
                     Completed Proposals
                 </Heading>
+                {inactiveProposals.map(prop => <ProposalView address={prop.cid} onClick={onClickProposal}/>)}
             </Box>
-            <Box gridArea="right" background="light-2" >
+            <Box gridArea="right" align={'center'} background="light-2" >
                 <Heading level={2}>
                     Your Submitted Models
                 </Heading>
