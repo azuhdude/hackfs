@@ -70,7 +70,7 @@ export const proposeCreate = async ({address, value, endDateMS}) => {
     console.log('sending value', value)
     await contract.methods.proposeCreate(address, endDateMS).send({
         from: await getEthAddress(),
-        value: web3.utils.toWei(value, 'eth')
+        value: web3.utils.toWei(value, 'ether')
     })
 }
 
