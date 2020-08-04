@@ -58,7 +58,7 @@ export default () => {
                 <Heading level={2}>
                     Your Submitted Models
                 </Heading>
-                {solutions.map(prop => <ProposalView address={prop.cid} onClick={onClickProposal}/>)}
+                {solutions.map(prop => <ProposalView address={prop.cid} onClick={onClickProposal} solutionView/>)}
             </Box>
         </Grid>
     </>

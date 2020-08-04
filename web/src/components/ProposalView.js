@@ -1,6 +1,7 @@
 import React, {useEffect, useState} from 'react'
-import {Box, Heading, Text} from 'grommet'
+import {Text} from 'grommet'
 import {downloadFile} from "../services/ipfs"
+import {getProposal} from "../services/web3"
 import Card from './Card'
 import { problemSchemaToProposal} from "../utils"
 
@@ -8,11 +9,14 @@ export default ({address, solutionView, onClick}) => {
     console.log(address)
     const [loading, setLoading] = useState(true)
     const [proposal, setProposal] = useState(null)
+    const [proposalContract, setProposalContract] = useState(null)
 
+    console.log(proposalContract)
     const populate = async () => {
         setLoading(true)
         const proposalData = await downloadFile(address)
         setProposal(problemSchemaToProposal(JSON.parse(proposalData)))
+        setProposalContract(await getProposal(address))
         setLoading(false)
     }
 
@@ -34,8 +38,10 @@ export default ({address, solutionView, onClick}) => {
                 <Text size={'small'} >{proposal.value} (ETH)</Text>
             </>}
             {solutionView && <>
+                <Text weight={'bold'}>Prize Pool</Text>
+                <Text size={'small'} >{proposal.value} (ETH)</Text>
                 <Text weight={'bold'}>Status</Text>
-                <Text size={'small'} >{proposal.status === 1 ? 'Active' : 'Completed'}</Text>
+                <Text size={'small'} >{proposalContract.status === "1" ? 'Active' : 'Completed'}</Text>
             </>}
         </>
     }

@@ -47,6 +47,10 @@ export const getProposals = async () => {
     return proposals
 }
 
+export const getProposal = async(address) => {
+    return await contract.methods.proposals(address).call()
+}
+
 export const getProposalOwner = async (cid) => {
     const proposal = await contract.methods.proposals(cid).call()
 
