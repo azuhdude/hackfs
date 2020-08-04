@@ -18,7 +18,6 @@ function App() {
     useEffect(() => {
         (async () => {
             await connect()
-            // await connect3Box()
             await connectIpfs()
             setLoading(false)
         })()
@@ -31,15 +30,13 @@ function App() {
     return (
         <Grommet>
             <Main>
-                <div className="App">
-                    <Router>
-                        <Switch>
-                            <Route path={'/'}>
-                                <Home/>
-                            </Route>
-                        </Switch>
-                    </Router>
-                </div>
+                <Router>
+                    <Switch>
+                        <Route path={'/'}>
+                            <Home/>
+                        </Route>
+                    </Switch>
+                </Router>
             </Main>
         </Grommet>
     );

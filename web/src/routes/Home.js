@@ -34,7 +34,7 @@ export default () => {
         </Header>
         <Grid
             rows={['full']}
-            columns={['1/3', '1/3', '1/3']}
+            columns={['auto']}
             gap="medium"
             areas={[
                 { name: 'left', start: [0, 0], end: [0, 0] },

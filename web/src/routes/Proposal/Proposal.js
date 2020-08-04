@@ -2,7 +2,7 @@ import { useParams } from 'react-router-dom'
 import { Header, Heading, Box, TextInput, Text, Button, Form, Table, TableHeader, TableBody, TableCell, TableRow, FormField } from 'grommet'
 import React, {useState, useEffect} from 'react'
 import { downloadFile } from '../../services/ipfs'
-import {getAddress, getProposalSubmissions, submitSolution, getProposalOwner, endProposalOwner} from '../../services/web3'
+import {getAddress, getProposalSubmissions, submitSolution, getProposalOwner, endProposalDate} from '../../services/web3'
 import { problemSchemaToProposal } from "../../utils"
 import IpfsUploader from '../../components/IpfsUploader'
 import { useHistory } from 'react-router-dom'
@@ -87,7 +87,7 @@ export default () => {
     }
 
     const endProposal = async () => {
-        await endProposalOwner(address)
+        await endProposalDate(address)
         history.push('/')
     }
 
@@ -122,6 +122,8 @@ export default () => {
 
     const isOwner = owner !== getAddress()
 
+    const hasEnded = endDateMS < Date.now()
+
     return <Box gap={'medium'}>
         <Header background={'light-3'} pad={'medium'}>
             <Box align={'start'}>
@@ -134,7 +136,7 @@ export default () => {
                 <Heading color={'neutral-2'} level={3}>{value} ETH</Heading>
                 <Text weight={'bold'}>Ends On: {(new Date(endDateMS)).toLocaleString()}</Text>
                 <Box height={'10px'} width={'10px'}/>
-                {isOwner && <Button primary label={'End Proposal'} onClick={endProposal}/>}
+                {hasEnded && <Button primary label={'End Proposal'} onClick={endProposal}/>}
             </Box>
         </Header>
         <Box direction={'row'}>
