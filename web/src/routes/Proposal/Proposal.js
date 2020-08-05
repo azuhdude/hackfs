@@ -23,7 +23,7 @@ const DataField = ({label, value}) => {
     </Box>
 }
 
-const SolutionRow = ({solution}) => {
+const SolutionRow = ({solution, showDispute}) => {
     const { cid, score, expectedReward, preprocessor } = solution
 
     return <TableRow>
@@ -31,11 +31,19 @@ const SolutionRow = ({solution}) => {
         <OverflowTableCell scope={'row'}>{preprocessor}</OverflowTableCell>
         <TableCell scope={'row'}>{score}</TableCell>
         <TableCell>{expectedReward}</TableCell>
-        <TableCell><Button size={"medium"} primary label={'Download'}/></TableCell>
+        <TableCell>
+            <Box>
+            <Button size={"medium"} primary label={'Download'}/>
+            {showDispute && <>
+                <Box height={'10px'} width={'20px'}/>
+                <Button size={'medium'} primary label={'Dispute'} disabled/>
+            </>}
+            </Box>
+        </TableCell>
     </TableRow>
 }
 
-const SolutionTable = ({solutions, title, description, emptyText}) => {
+const SolutionTable = ({solutions, title, description, emptyText, showDispute}) => {
     return <Box gap={'small'} pad={'0 20px'} width={'600px'}>
         <Heading level={2} margin={'none'}>{title}</Heading>
         <Text>{description}</Text>
@@ -59,7 +67,7 @@ const SolutionTable = ({solutions, title, description, emptyText}) => {
                 </TableRow>
             </TableHeader>
             <TableBody>
-                {solutions.map(solution => <SolutionRow solution={solution}/>)}
+                {solutions.map(solution => <SolutionRow solution={solution} showDispute={showDispute}/>)}
             </TableBody>
         </Table>}
         {solutions.length === 0 && <Text weight={'bold'}>{emptyText}</Text>}
@@ -187,6 +195,7 @@ export default () => {
                         description={'Your trained model submitted for this training proposal'}
                         emptyText={'You haven\'t submitted a solution yet! Use the form above.'}
                         solutions={yourSolutions}
+                        showDispute
                     />
                     <Box width={'20px'} height={'30px'}/>
                     <SolutionTable

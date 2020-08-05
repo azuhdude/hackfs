@@ -1,18 +1,32 @@
 import Web3 from 'web3'
 import ProposalContract from '../contracts/ProposalContract'
 
-const network = "5777"
-
 export const ethEnabled = () => {
     return !!Web3.givenProvider
 }
 
 let web3, contract, address
 
+const getContractAddress = (currentNetwork, networkId) => {
+    let networkKey
+    if (currentNetwork === "private") {
+        networkKey = networkId
+    }
+    return ProposalContract.networks[networkKey].address
+}
+
 export const connect = async () => {
     web3 = new Web3(Web3.givenProvider)
+
+    window.ethereum.on('chainChanged', () => {
+        document.location.reload()
+    })
+
+    const currentNetwork = await web3.eth.net.getNetworkType()
+    const networkId = await web3.eth.net.getId()
+
     await requestAccounts()
-    contract = new web3.eth.Contract(ProposalContract.abi, ProposalContract.networks[network].address, {
+    contract = new web3.eth.Contract(ProposalContract.abi, getContractAddress(currentNetwork, networkId), {
         from: await getEthAddress()
     })
 }

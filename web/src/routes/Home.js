@@ -1,6 +1,6 @@
 import ProposalView from "../components/ProposalView"
 import React, {useState, useEffect} from "react"
-import { Grid, Box, Heading, Header, Button} from 'grommet'
+import { Grid, Box, Heading, Header, Button, Text} from 'grommet'
 import { useHistory } from 'react-router-dom'
 import { getProposals, getSolutionsForAddress } from '../services/web3'
 
