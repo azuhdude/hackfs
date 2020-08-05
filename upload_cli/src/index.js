@@ -1,6 +1,8 @@
 const { Command, requiredOption } = require('commander');
 const program = new Command();
 
+const { createPow } = require("@textile/powergate-client");
+
 function create_upload_receipt() {
 
 }
@@ -40,7 +42,8 @@ function file_data_mode() {
     // write data_upload_receipt_test_data
 }
 
-function numerical_data_mode() {
+function numerical_data_mode(args) {
+    const power_gate_client = createPow({ args.parent.host })
     // upload train data csv
     // upload test data csv
     // save data address
@@ -51,26 +54,25 @@ function numerical_data_mode() {
     // write data_upload_receipt_test_data
 }
 
-program
+const upload = program
     .command('upload')
+    .requiredOption('--host <string>')
+    .requiredOption('--key <string>') //Prob should just read an env var
+
+upload
     .command('file_data')
     .requiredOption('--train_data_list <string>')
     .requiredOption('--test_data_list <string>')
     .action(function (args) {
-        console.log('file_data')
-        console.log(args.train_data_list)
-        console.log(args.test_data_list)
+        file_data_mode(args)
     })
-    
 
-program
+upload
     .command('numerical_data')
     .requiredOption('--train_data_file <string>')
     .requiredOption('--test_data_file <string>')
     .action(function (args) {
-        console.log('numerical_data')
-        console.log(args.train_data_file)
-        console.log(args.test_data_file)
+        numerical_data_mode(args)   
     })
 
 
