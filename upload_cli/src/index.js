@@ -15,12 +15,19 @@ function upload_file_to_ffs() {
 
 };
 
-function find_file_and_read_file() {
+function find_and_read_file() {
 
 }
 
 function parse_list_of_files() {
 
+}
+
+function create_client(args){
+    const host = args.parent.host
+    const power_gate_client = createPow({ host })
+    power_gate_client.setToken(args.parent.key)
+    return power_gate_client
 }
 
 function file_data_mode() {
@@ -36,20 +43,18 @@ function file_data_mode() {
         // upload file
         // save data address
 
-    // format data address json
-    // format data address json
     // write data_upload_reciept_train_data
     // write data_upload_receipt_test_data
 }
 
 function numerical_data_mode(args) {
-    const power_gate_client = createPow({ args.parent.host })
-    // upload train data csv
-    // upload test data csv
-    // save data address
-    // save data address
-    // format data address json
-    // format data address json
+    const power_gate_client = create_client(args)
+
+    const train_data = find_and_read_file(args.train_data_file)
+    const test_data = find_and_read_file(args.test_data_file)
+    upload_file_to_ffs(train_data)
+    upload_file_to_ffs(test_data)
+
     // write data_upload_reciept_train_data
     // write data_upload_receipt_test_data
 }
