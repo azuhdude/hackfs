@@ -1,5 +1,5 @@
 export const proposalToProblemSchema = (data) => {
-    const {name, description, value, trainX, trainY, validateX, validateY, endDateMS} = data
+    const {name, description, value, trainX, trainY, validateX, validateY, endDateMS, evaluation} = data
     return {
         name,
         bounty: value,
@@ -24,8 +24,10 @@ export const proposalToProblemSchema = (data) => {
                     path: validateY
                 }
             }
+        },
+        evaluation: {
+            evaluation_script: evaluation
         }
-
     }
 }
 
@@ -39,5 +41,6 @@ export const problemSchemaToProposal = (data) => {
         trainY: data.data.train.x.path,
         validateX: data.data.validation.x.path,
         validateY: data.data.validation.x.path,
+        evaluation: data.evaluation?.evaluation_script
     }
 }

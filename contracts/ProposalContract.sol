@@ -14,6 +14,7 @@ contract ProposalContract {
     uint reward;
     uint score;
     uint perf;
+    string preprocessorAddress;
     string ipfsSolutionAddress;
     address payable owner;
   }
@@ -68,7 +69,7 @@ contract ProposalContract {
     _proposeEnd(ipfsDataAddress);
   }
 
-  function solutionCreate(string memory ipfsDataAddress, string memory ipfsSolutionAddress, uint score) public {
+  function solutionCreate(string memory ipfsDataAddress, string memory ipfsSolutionAddress, uint score, string memory preprocessorAddress) public {
     // TODO: validation on IPFS address
     // TODO: ensure bad actors cant submit same model from different addresses, or slightly tweaked model to get more rewards
     require(!_testEmptyString(proposals[ipfsDataAddress].solutions[msg.sender].ipfsSolutionAddress), "A solution already exists for this sender");
@@ -76,6 +77,7 @@ contract ProposalContract {
     require(score <= 100, "The score cannot be greater than 100");
 
     proposals[ipfsDataAddress].solutions[msg.sender].ipfsSolutionAddress = ipfsSolutionAddress;
+    proposals[ipfsDataAddress].solutions[msg.sender].preprocessorAddress = preprocessorAddress;
     proposals[ipfsDataAddress].solutions[msg.sender].owner = msg.sender;
     proposals[ipfsDataAddress].solutions[msg.sender].score = score;
     proposals[ipfsDataAddress].solutionList.push(proposals[ipfsDataAddress].solutions[msg.sender]);
@@ -110,11 +112,12 @@ contract ProposalContract {
     return proposals[ipfsDataAddress].solutionList.length;
   }
 
-  function getProposalSolution(string memory ipfsDataAddress, uint index) public view returns(string memory cid, uint score, address owner) {
+  function getProposalSolution(string memory ipfsDataAddress, uint index) public view returns(string memory cid, uint score, address owner, string memory preprocessor) {
     return (
       proposals[ipfsDataAddress].solutionList[index].ipfsSolutionAddress,
       proposals[ipfsDataAddress].solutionList[index].score,
-      proposals[ipfsDataAddress].solutionList[index].owner
+      proposals[ipfsDataAddress].solutionList[index].owner,
+      proposals[ipfsDataAddress].solutionList[index].preprocessorAddress
     );
   }
 

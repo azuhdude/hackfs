@@ -25,11 +25,13 @@ export const uploadFile = async ({path, content}) => {
 export const downloadFile = async (address) => {
     const chunks = []
     console.log(`downloading file from ${address}`)
-    for await (const chunk of client.cat(address)) {
-        chunks.push(chunk)
-    }
+    // for await (const chunk of client.cat(address)) {
+    //     chunks.push(chunk)
+    // }
+    const file = await fetch(`https://cloudflare-ipfs.com/ipfs/${address}`)
     console.log('finished downloading')
-    return Buffer.concat(chunks).toString()
+    // return Buffer.concat(chunks).toString()
+    return await file.text()
 }
 
 export const validateAddress = async (address) => {

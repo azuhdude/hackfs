@@ -86,8 +86,8 @@ export const endProposalDate = async (address) => {
     await contract.methods.proposeEndDate(address).send()
 }
 
-export const submitSolution = async ({problemCid, solutionCid, accuracy}) => {
-    await contract.methods.solutionCreate(problemCid, solutionCid, accuracy).send()
+export const submitSolution = async ({problemCid, solutionCid, accuracy, preprocessor}) => {
+    await contract.methods.solutionCreate(problemCid, solutionCid, accuracy, preprocessor).send()
 }
 
 export const getSolutionsForAddress = async() => {

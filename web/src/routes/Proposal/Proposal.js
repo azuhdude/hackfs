@@ -10,7 +10,7 @@ import styled from 'styled-components'
 
 const OverflowTableCell = styled(TableCell)`
     overflow-x: auto;
-    max-width: 200px;
+    max-width: 100px;
 `
 
 const DataField = ({label, value}) => {
@@ -24,10 +24,11 @@ const DataField = ({label, value}) => {
 }
 
 const SolutionRow = ({solution}) => {
-    const { cid, score, expectedReward } = solution
+    const { cid, score, expectedReward, preprocessor } = solution
 
     return <TableRow>
         <OverflowTableCell scope={'row'}>{cid}</OverflowTableCell>
+        <OverflowTableCell scope={'row'}>{preprocessor}</OverflowTableCell>
         <TableCell scope={'row'}>{score}</TableCell>
         <TableCell>{expectedReward}</TableCell>
         <TableCell><Button size={"medium"} primary label={'Download'}/></TableCell>
@@ -42,7 +43,10 @@ const SolutionTable = ({solutions, title, description, emptyText}) => {
             <TableHeader>
                 <TableRow>
                     <TableCell scope="col" border="bottom">
-                        IPFS CID
+                        IPFS Model CID
+                    </TableCell>
+                    <TableCell>
+                        IPFS Preprocessor CID
                     </TableCell>
                     <TableCell scope="col" border="bottom">
                         Accuracy Score
@@ -81,8 +85,8 @@ export default () => {
         })()
     }, [])
 
-    const onSubmit = async ({model, accuracy}) => {
-        await submitSolution({problemCid: address, solutionCid: model, accuracy})
+    const onSubmit = async ({model, accuracy, preprocessor}) => {
+        await submitSolution({problemCid: address, solutionCid: model, accuracy, preprocessor})
         history.push('/')
     }
 
@@ -93,7 +97,7 @@ export default () => {
 
     if (loading) return <h1>Loading...</h1>
 
-    const { name, description, endDateMS, value, trainX, trainY, validateX, validateY } = proposal
+    const { name, description, endDateMS, value, trainX, trainY, validateX, validateY, evaluation } = proposal
 
     const sortedSolutions = solutions.sort((a, b) => a.score > b.score ? 1 : -1)
 
@@ -149,6 +153,8 @@ export default () => {
                 <DataField label={'Training Target Data'} value={trainY}/>
                 <DataField label={'Validate Feature Data'} value={validateX}/>
                 <DataField label={'Validate Target Data'} value={validateY}/>
+                <DataField label={'Evaluation Script'} value={evaluation}/>
+
             </Box>
             <Box width={'50%'} align={'center'} gap={'medium'}>
                 {!isOwner && <>
@@ -160,6 +166,7 @@ export default () => {
                         <Form onSubmit={({value}) => onSubmit(value)}>
                             <Box align={'start'}>
                                 <IpfsUploader name={'model'} label={'Model File'} required/>
+                                <IpfsUploader name={'preprocessor'} label={'Preprocessor Script'} required/>
                                 <Box align={'start'} margin={'10px 0'} pad={'0 10px'}>
                                     <Text margin={'5px 0'}>Accuracy Score</Text>
                                     <FormField validate={(value, {accuracy}) => {

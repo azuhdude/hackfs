@@ -78,6 +78,9 @@ export default () => {
                             <IpfsUploader name={'validateX'} label={'Validate Feature Data'}/>
                             <IpfsUploader name={'validateY'} label={'Validate Target Data'}/>
                         </Box>
+                        <Box>
+                            <IpfsUploader name={'evaluation'} label={'Evaluation Script'}/>
+                        </Box>
                     </Box>
                 </Box>
             </Box>
