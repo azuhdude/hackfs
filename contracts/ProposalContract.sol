@@ -54,8 +54,8 @@ contract ProposalContract {
   }
 
   function _proposeEnd(string memory ipfsDataAddress) private {
+    _reward(ipfsDataAddress);
     proposals[ipfsDataAddress].status = 0;
-//    _reward(ipfsDataAddress);
   }
 
   function proposeEnd(string memory ipfsDataAddress) public {
