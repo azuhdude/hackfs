@@ -139,7 +139,7 @@ contract ProposalContract {
     }
 
     for (uint i = 0; i < proposals[ipfsDataAddress].solutionList.length; i++) {
-      uint reward = (proposals[ipfsDataAddress].solutionList[i].perf / totalPerf) * proposals[ipfsDataAddress].balance;
+      uint reward = (proposals[ipfsDataAddress].solutionList[i].perf * proposals[ipfsDataAddress].balance) / totalPerf;
       proposals[ipfsDataAddress].solutionList[i].owner.transfer(reward);
       proposals[ipfsDataAddress].solutions[proposals[ipfsDataAddress].solutionList[i].owner].reward = reward;
     }
