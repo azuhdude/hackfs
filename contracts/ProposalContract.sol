@@ -14,9 +14,11 @@ contract ProposalContract {
     uint reward;
     uint score;
     uint perf;
+    bool disputed;
     string preprocessorAddress;
     string ipfsSolutionAddress;
     address payable owner;
+    address payable disputer;
   }
 
   string[] public proposalList;
@@ -118,12 +120,15 @@ contract ProposalContract {
     return proposals[ipfsDataAddress].solutionList.length;
   }
 
-  function getProposalSolution(string memory ipfsDataAddress, uint index) public view returns(string memory cid, uint score, address owner, string memory preprocessor) {
+  function getProposalSolution(string memory ipfsDataAddress, uint index) public view returns(string memory cid, uint score, address owner, string memory preprocessor, bool disputed) {
+    address owner = proposals[ipfsDataAddress].solutionList[index].owner;
+
     return (
-      proposals[ipfsDataAddress].solutionList[index].ipfsSolutionAddress,
-      proposals[ipfsDataAddress].solutionList[index].score,
-      proposals[ipfsDataAddress].solutionList[index].owner,
-      proposals[ipfsDataAddress].solutionList[index].preprocessorAddress
+      proposals[ipfsDataAddress].solutions[owner].ipfsSolutionAddress,
+      proposals[ipfsDataAddress].solutions[owner].score,
+      proposals[ipfsDataAddress].solutions[owner].owner,
+      proposals[ipfsDataAddress].solutions[owner].preprocessorAddress,
+      proposals[ipfsDataAddress].solutions[owner].disputed
     );
   }
 
@@ -146,9 +151,31 @@ contract ProposalContract {
 
     for (uint i = 0; i < proposals[ipfsDataAddress].solutionList.length; i++) {
       uint reward = (proposals[ipfsDataAddress].solutionList[i].perf * proposals[ipfsDataAddress].balance) / totalPerf;
-      proposals[ipfsDataAddress].solutionList[i].owner.transfer(reward);
+      // TODO: use the real solutions here since disputer will never be updated
+      if (proposals[ipfsDataAddress].solutionList[i].disputer == address(0)) {
+        proposals[ipfsDataAddress].solutionList[i].disputer.transfer(reward);
+      }
+      else {
+        proposals[ipfsDataAddress].solutionList[i].owner.transfer(reward);
+      }
       proposals[ipfsDataAddress].solutions[proposals[ipfsDataAddress].solutionList[i].owner].reward = reward;
     }
+  }
+
+  function disputeSolution(string memory ipfsDataAddress, address ownerAddress) public payable returns(uint) {
+    require(_testEmptyString(proposals[ipfsDataAddress].solutions[ownerAddress].ipfsSolutionAddress), "A solution does not exist for this sender");
+    require(!proposals[ipfsDataAddress].solutions[ownerAddress].disputed, "This proposal has already been disputed");
+    uint gasCost = 10000;
+    require(msg.value > gasCost, "Must pay for dispute gas");
+    uint disputeWon = uint(uint256(keccak256(abi.encodePacked(now, msg.sender)))%2);
+
+    if (disputeWon == 1) {
+      proposals[ipfsDataAddress].solutions[ownerAddress].disputer = msg.sender;
+    }
+
+    proposals[ipfsDataAddress].solutions[ownerAddress].disputed = true;
+
+    return disputeWon;
   }
 
   function _testEmptyString(string memory anyString) pure internal returns(bool) {

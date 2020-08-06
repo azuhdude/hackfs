@@ -1,8 +1,8 @@
 import { useParams } from 'react-router-dom'
-import { Header, Heading, Box, TextInput, Text, Button, Form, Table, TableHeader, TableBody, TableCell, TableRow, FormField } from 'grommet'
+import { Layer, Header, Heading, Box, TextInput, Text, Button, Form, Table, TableHeader, TableBody, TableCell, TableRow, FormField } from 'grommet'
 import React, {useState, useEffect} from 'react'
 import { downloadFile } from '../../services/ipfs'
-import {getAddress, getProposalSubmissions, submitSolution, getProposal, endProposalDate, proposePayout} from '../../services/web3'
+import {getAddress, getProposalSubmissions, submitSolution, getProposal, endProposalDate, proposePayout, disputeSolution} from '../../services/web3'
 import { problemSchemaToProposal } from "../../utils"
 import IpfsUploader from '../../components/IpfsUploader'
 import { useHistory } from 'react-router-dom'
@@ -24,10 +24,15 @@ const DataField = ({label, value}) => {
     </Box>
 }
 
-const SolutionRow = ({solution, showDispute}) => {
-    const { cid, score, expectedReward, preprocessor } = solution
+const SolutionRow = ({solution, address}) => {
+    const { cid, score, expectedReward, preprocessor, disputed } = solution
     const [showCids, setShowCids] = useState(false)
+    const sendDispute = async (cid) => {
+        console.log("Disputing solution")
+        const res = await disputeSolution(cid, solution.owner)
+    }
 
+    // TODO: only show button if not owner
     return <TableRow>
         {showCids && <OverflowTableCell scope={'row'}>{cid}</OverflowTableCell>}
         {showCids && preprocessor && <OverflowTableCell scope={'row'}>{preprocessor}</OverflowTableCell>}
@@ -45,16 +50,34 @@ const SolutionRow = ({solution, showDispute}) => {
                     primary
                     label={`${showCids ? 'Hide' : 'Show'} CIDs`}
                     onClick={() => setShowCids(!showCids)}/>
-            {showDispute && <>
-                <Box height={'10px'} width={'20px'}/>
-                <Button size={'medium'} primary label={'Dispute'} disabled/>
-            </>}
+            <Button size={"medium"} primary label={'Download'}/>
+            <Box height={'10px'} width={'20px'}/>
+            <Button size={'medium'} primary label={disputed ? 'Disputed' : 'Dispute'} onClick={() => sendDispute(address)} disabled={disputed}/>
             </Box>
         </TableCell>
     </TableRow>
 }
 
-const SolutionTable = ({solutions, title, description, emptyText, showDispute}) => {
+// TODO: implement
+const DisputeModal = (disputeWon) => {
+    const [show, setShow] = React.useState();
+    return (
+        <Box>
+          <Button label="show" onClick={() => setShow(true)} />
+          {show && (
+            <Layer
+              onEsc={() => setShow(false)}
+              onClickOutside={() => setShow(false)}
+            >   
+            { disputeWon ? <Text>You won the dispute. You will receive the funds from this solution.</Text> : <Text>You lost the dispute. You will not receive the funds from this solution.</Text> }
+              <Button label="close" onClick={() => setShow(false)} />
+            </Layer>
+          )}
+        </Box>
+      );
+}
+
+const SolutionTable = ({solutions, title, description, emptyText, address}) => {
     return <Box gap={'small'} pad={'0 20px'} width={'600px'}>
         <Heading level={2} margin={'none'}>{title}</Heading>
         <Text>{description}</Text>
@@ -78,7 +101,7 @@ const SolutionTable = ({solutions, title, description, emptyText, showDispute}) 
                 </TableRow>
             </TableHeader>
             <TableBody>
-                {solutions.map(solution => <SolutionRow solution={solution} showDispute={showDispute}/>)}
+                {solutions.map(solution => <SolutionRow solution={solution} address={address}/>)}
             </TableBody>
         </Table>}
         {solutions.length === 0 && <Text weight={'bold'}>{emptyText}</Text>}
@@ -157,6 +180,7 @@ export default () => {
     const reviewEnded = Date.now() - endDateMS > 30000
 
     return <Box gap={'medium'}>
+        {/* <DisputeModal disputeWon={false}></DisputeModal> */}
         <Header background={'light-3'} pad={'40px 10px 20px 10px'}>
             <Box align={'start'}>
                 <Heading margin={'none'}>Proposal</Heading>
@@ -219,7 +243,7 @@ export default () => {
                         description={'Your trained model submitted for this training proposal'}
                         emptyText={'You haven\'t submitted a solution yet! Use the form above.'}
                         solutions={yourSolutions}
-                        showDispute
+                        address={address}
                     />
                     <Box width={'20px'} height={'30px'}/>
                     <SolutionTable
@@ -227,6 +251,7 @@ export default () => {
                         description={'Trained models submitted for this training proposal'}
                         emptyText={'No solutions have been submitted yet!'}
                         solutions={theirSolutions}
+                        address={address}
                     />
                 </>}
                 {isOwner && <SolutionTable
@@ -234,6 +259,7 @@ export default () => {
                     description={'Trained models submitted for your training proposal'}
                     emptyText={'No solutions have been submitted yet!'}
                     solutions={sortedSolutions}
+                    address={address}
                 />}
                 <Box width={'20px'} height={'40px'}/>
             </Box>

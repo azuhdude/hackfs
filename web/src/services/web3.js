@@ -96,6 +96,14 @@ export const getProposalSubmission = async (cid, sender) => {
     return await contract.methods.proposals(cid).solutions(sender).call()
 }
 
+export const disputeSolution = async (cid, owner) => {
+    const gasCost = "0.0001"
+    return await contract.methods.disputeSolution(cid, owner).send({
+        from: await getEthAddress(),
+        value: web3.utils.toWei(gasCost, 'ether')
+    });
+}
+
 export const proposeCreate = async ({address, value, endDateMS}) => {
     console.log('sending value', value)
     await contract.methods.proposeCreate(address, endDateMS).send({
