@@ -51,12 +51,7 @@ export const getProposals = async () => {
     const proposals = []
     for (let i = 0; i < proposalSize; i++) {
         const cid = await contract.methods.proposalList(i).call()
-        const solutionCount = await contract.methods.getProposalSolutionCount(cid).call()
-        proposals.push({
-            ...await contract.methods.proposals(cid).call(),
-            cid,
-            solutionCount
-        })
+        proposals.push(await getProposal(cid))
     }
     console.log("proposal size", proposalSize)
     console.log("proposals", proposals)
@@ -64,7 +59,13 @@ export const getProposals = async () => {
 }
 
 export const getProposal = async(address) => {
-    return await contract.methods.proposals(address).call()
+    const proposal =  await contract.methods.proposals(address).call()
+    const solutionCount = await contract.methods.getProposalSolutionCount(address).call()
+    return {
+        ...proposal,
+        cid: address,
+        solutionCount
+    }
 }
 
 export const getProposalOwner = async (cid) => {
@@ -113,16 +114,13 @@ export const submitSolution = async ({problemCid, solutionCid, accuracy, preproc
 
 export const getSolutionsForAddress = async() => {
     const solutionsSize = await contract.methods.getSolutionsForAddressLength().call()
-    const solutionProposalAddresses = []
+    const solutionProposals = []
     console.log('solution size', solutionsSize)
 
     for (let i = 0; i < solutionsSize; i++) {
         const cid = await contract.methods.solutionsForAddr(address, i).call()
-        solutionProposalAddresses.push({
-            ...await contract.methods.proposals(cid).call(),
-            cid
-        })
+        solutionProposals.push(await getProposal(cid))
     }
 
-    return solutionProposalAddresses
+    return solutionProposals
 }
