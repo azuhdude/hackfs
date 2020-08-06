@@ -18,22 +18,32 @@ const DataField = ({label, value}) => {
         <Text>{label}</Text>
         <Box direction={'row'} gap={'small'}>
             <TextInput value={value}/>
-            <Button size={"medium"} primary label={'Download'}/>
+            <Button size={"medium"} primary label={'Download'} onClick={() => downloadFile(value, true)}/>
         </Box>
     </Box>
 }
 
 const SolutionRow = ({solution, showDispute}) => {
     const { cid, score, expectedReward, preprocessor } = solution
+    const [showCids, setShowCids] = useState(false)
 
     return <TableRow>
-        <OverflowTableCell scope={'row'}>{cid}</OverflowTableCell>
-        <OverflowTableCell scope={'row'}>{preprocessor}</OverflowTableCell>
+        {showCids && <OverflowTableCell scope={'row'}>{cid}</OverflowTableCell>}
+        {showCids && <OverflowTableCell scope={'row'}>{preprocessor}</OverflowTableCell>}
+        {!showCids && <TableCell scope={'row'}>
+            <Button primary label={'Download'} onClick={() => downloadFile(cid, true)}/>
+        </TableCell>}
+        {!showCids && <TableCell>
+            <Button primary label={'Download'} onClick={() => downloadFile(preprocessor, true)}/>
+        </TableCell>}
         <TableCell scope={'row'}>{score}</TableCell>
         <TableCell>{expectedReward}</TableCell>
         <TableCell>
             <Box>
-            <Button size={"medium"} primary label={'Download'}/>
+            <Button size={"medium"}
+                    primary
+                    label={`${showCids ? 'Hide' : 'Show'} CIDs`}
+                    onClick={() => setShowCids(!showCids)}/>
             {showDispute && <>
                 <Box height={'10px'} width={'20px'}/>
                 <Button size={'medium'} primary label={'Dispute'} disabled/>
@@ -51,10 +61,10 @@ const SolutionTable = ({solutions, title, description, emptyText, showDispute}) 
             <TableHeader>
                 <TableRow>
                     <TableCell scope="col" border="bottom">
-                        IPFS Model CID
+                        IPFS Model
                     </TableCell>
                     <TableCell>
-                        IPFS Preprocessor CID
+                        IPFS Preprocessor
                     </TableCell>
                     <TableCell scope="col" border="bottom">
                         Accuracy Score
@@ -122,8 +132,6 @@ export default () => {
         solution.performance = solution.score / maxScore
         totalPerformance += solution.performance
     })
-
-    console.log(maxScore, totalPerformance)
 
     sortedSolutions.forEach(solution => {
         solution.expectedReward = ((solution.score / maxScore) / totalPerformance) * value

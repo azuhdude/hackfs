@@ -135,8 +135,6 @@ export default () => {
     const yourProposals = proposals.filter(proposal => proposal.sender === getAddress())
     const inactiveProposals = proposals.filter(proposal => proposal.status === "0" && proposal.sender !== getAddress())
 
-    console.log('solutions', solutions)
-
     let content
 
     if (!currentView) {

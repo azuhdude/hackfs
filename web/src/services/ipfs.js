@@ -22,7 +22,22 @@ export const uploadFile = async ({path, content}) => {
     return fileAdded.cid.toString()
 }
 
-export const downloadFile = async (address) => {
+// Function to download data to a file
+function saveLocally(data, filename) {
+    const file = new Blob([data], {type: 'text/plain'});
+    const a = document.createElement("a"),
+        url = URL.createObjectURL(file);
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    setTimeout(function() {
+        document.body.removeChild(a);
+        window.URL.revokeObjectURL(url);
+    }, 0);
+}
+
+export const downloadFile = async (address, saveFile) => {
     const chunks = []
     console.log(`downloading file from ${address}`)
     // for await (const chunk of client.cat(address)) {
@@ -31,6 +46,9 @@ export const downloadFile = async (address) => {
     const file = await fetch(`https://cloudflare-ipfs.com/ipfs/${address}`)
     console.log('finished downloading')
     // return Buffer.concat(chunks).toString()
+    if (saveFile) {
+        saveLocally(file, address)
+    }
     return await file.text()
 }
 
