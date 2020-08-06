@@ -2,3 +2,4 @@
 .idea
 build/*
 web/src/contracts/ProposalContract.json
+**/node_modules

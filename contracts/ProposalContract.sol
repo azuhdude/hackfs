@@ -4,7 +4,7 @@ contract ProposalContract {
   struct Proposal {
     address sender;
     uint balance;
-    uint status; // 1 = active, 0 = completed
+    uint status; // 2 = review, 1 = active, 0 = completed
     uint endDateMS; // epoch date for the proposal to be ended automatically
     mapping (address => Solution) solutions;
     Solution[] solutionList;
@@ -30,8 +30,11 @@ contract ProposalContract {
   constructor() public {
   }
 
-  function proposeCreate(string memory ipfsDataAddress, uint endDateMS) public payable {
+  function _proposalEnded(string memory ipfsDataAddress) private view returns (bool) {
+    return block.timestamp * 1000 > proposals[ipfsDataAddress].endDateMS;
+  }
 
+  function proposeCreate(string memory ipfsDataAddress, uint endDateMS) public payable {
     require(proposals[ipfsDataAddress].balance == 0, "There is already a proposal for that dataset");
     require(msg.value > 0, "Must stake some amount to create a proposal");
 
@@ -58,14 +61,16 @@ contract ProposalContract {
     proposals[ipfsDataAddress].status = 0;
   }
 
-  function proposeEnd(string memory ipfsDataAddress) public {
-    require(msg.sender == proposals[ipfsDataAddress].sender, "Only the owner can end a proposal");
-    _proposeEnd(ipfsDataAddress);
-  }
-
   function proposeDateEnd(string memory ipfsDataAddress) public {
     require(proposals[ipfsDataAddress].balance > 0, "There is not an existing proposal for that dataset");
-    require(block.timestamp * 1000 > proposals[ipfsDataAddress].endDateMS, "Proposal is not yet over");
+    require(_proposalEnded(ipfsDataAddress), "Proposal is not yet over");
+    proposals[ipfsDataAddress].status = 2;
+  }
+
+  function proposePayout(string memory ipfsDataAddress) public {
+    require(proposals[ipfsDataAddress].balance > 0, "There is not an existing proposal for that dataset");
+    require(proposals[ipfsDataAddress].status == 2, "Proposal is not in the waiting period");
+    require(block.timestamp * 1000 - proposals[ipfsDataAddress].endDateMS > 30000, "Proposal waiting period is not over");
     _proposeEnd(ipfsDataAddress);
   }
 
@@ -75,8 +80,9 @@ contract ProposalContract {
     require(!_testEmptyString(proposals[ipfsDataAddress].solutions[msg.sender].ipfsSolutionAddress), "A solution already exists for this sender");
     require(proposals[ipfsDataAddress].balance > 0, "There is not an existing proposal for that dataset");
     require(score <= 100, "The score cannot be greater than 100");
+    require(!_proposalEnded(ipfsDataAddress), "Proposal has already ended");
 
-    proposals[ipfsDataAddress].solutions[msg.sender].ipfsSolutionAddress = ipfsSolutionAddress;
+  proposals[ipfsDataAddress].solutions[msg.sender].ipfsSolutionAddress = ipfsSolutionAddress;
     proposals[ipfsDataAddress].solutions[msg.sender].preprocessorAddress = preprocessorAddress;
     proposals[ipfsDataAddress].solutions[msg.sender].owner = msg.sender;
     proposals[ipfsDataAddress].solutions[msg.sender].score = score;

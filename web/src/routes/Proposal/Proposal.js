@@ -2,7 +2,7 @@ import { useParams } from 'react-router-dom'
 import { Header, Heading, Box, TextInput, Text, Button, Form, Table, TableHeader, TableBody, TableCell, TableRow, FormField } from 'grommet'
 import React, {useState, useEffect} from 'react'
 import { downloadFile } from '../../services/ipfs'
-import {getAddress, getProposalSubmissions, submitSolution, getProposalOwner, endProposalDate} from '../../services/web3'
+import {getAddress, getProposalSubmissions, submitSolution, getProposal, endProposalDate, proposePayout} from '../../services/web3'
 import { problemSchemaToProposal } from "../../utils"
 import IpfsUploader from '../../components/IpfsUploader'
 import { useHistory } from 'react-router-dom'
@@ -91,7 +91,7 @@ export default () => {
     const [loading, setLoading] = useState(true)
     const [proposal, setProposal] = useState(null)
     const [solutions, setSolutions] = useState([])
-    const [owner, setOwner] = useState(null)
+    const [contractProposal, setContractProposal] = useState(null)
 
     useEffect(() => {
         (async () => {
@@ -99,7 +99,7 @@ export default () => {
             console.log(JSON.parse(proposalData))
             setProposal(problemSchemaToProposal(JSON.parse(proposalData)))
             setSolutions(await getProposalSubmissions(address))
-            setOwner(await getProposalOwner(address))
+            setContractProposal(await getProposal(address))
             setLoading(false)
         })()
     }, [])
@@ -114,7 +114,15 @@ export default () => {
         history.push('/')
     }
 
+    const triggerPayout = async () => {
+        await proposePayout(address)
+        history.push('/')
+    }
+
     if (loading) return <h1>Loading...</h1>
+
+    const { owner , status, endedOnMS } = contractProposal
+    console.log('contract proposal', contractProposal)
 
     const { name, description, endDateMS, value, trainX, trainY, validateX, validateY, evaluation } = proposal
 
@@ -143,7 +151,10 @@ export default () => {
 
     const isOwner = owner === getAddress()
 
-    const hasEnded = endDateMS < Date.now()
+    const hasEndedDate = endDateMS < Date.now()
+    const hasEnded = status === "0"
+    const inReview = status === "2"
+    const reviewEnded = Date.now() - endDateMS > 30000
 
     return <Box gap={'medium'}>
         <Header background={'light-3'} pad={'40px 10px 20px 10px'}>
@@ -155,9 +166,12 @@ export default () => {
             <Box align={'end'} pad={'medium'}>
                 <Heading color={'neutral-2'} level={3} margin={'none'}>Bounty Value:</Heading>
                 <Heading color={'neutral-2'} level={3} margin={'5px 0'}>{value} ETH</Heading>
-                <Text weight={'bold'}>Ends On: {(new Date(endDateMS)).toLocaleString()}</Text>
+                <Text weight={'bold'}>{`${hasEndedDate ? 'Ended' : 'Ends'}`} On: {(new Date(endDateMS)).toLocaleString()}</Text>
+                {inReview && <Text weight={'bold'}>In Review Until: {(new Date(Number(endDateMS + 30000))).toLocaleString()}</Text>}
                 <Box height={'10px'} width={'10px'}/>
-                {hasEnded && <Button primary label={'End Proposal'} onClick={endProposal}/>}
+                {hasEndedDate && !inReview && <Button primary label={'Trigger Review'} onClick={endProposal}/>}
+                {inReview && reviewEnded && <Button primary label={'Payout Rewards'} onClick={triggerPayout}/>}
+                {hasEnded && <Text>Proposal is now finished</Text>}
             </Box>
         </Header>
         <BackArrow onClick={() => history.push('/')} />
@@ -175,7 +189,7 @@ export default () => {
 
             </Box>
             <Box width={'50%'} align={'center'} gap={'medium'}>
-                {!isOwner && !hasEnded && <>
+                {!isOwner && !hasEndedDate && <>
                     <Box gap={'small'} width="600px" pad={'0 20px 10px 20px'}>
                         <Heading level={2} margin={'none'}>Model Submission</Heading>
                         <Text>Submit your trained model to claim part of this bounty</Text>

@@ -104,12 +104,12 @@ export const proposeCreate = async ({address, value, endDateMS}) => {
     })
 }
 
-export const endProposalOwner = async (address) => {
-    await contract.methods.proposeEnd(address).send()
+export const endProposalDate = async (address) => {
+    await contract.methods.proposeDateEnd(address).send()
 }
 
-export const endProposalDate = async (address) => {
-    await contract.methods.proposeEndDate(address).send()
+export const proposePayout = async (address) => {
+    await contract.methods.proposePayout(address).send()
 }
 
 export const submitSolution = async ({problemCid, solutionCid, accuracy, preprocessor}) => {
