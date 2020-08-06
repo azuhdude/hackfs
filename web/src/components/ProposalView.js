@@ -19,6 +19,16 @@ export default ({proposal, solutionView, onClick}) => {
         populate()
     }, [])
 
+    const statusText = () => {
+        if (proposal.status === "1") {
+            return "Active"
+        } else if (proposal.status === "2") {
+            return "In Review"
+        } else {
+            return "Completed"
+        }
+    }
+
     let contents
     if (loading) {
         contents = <Text>Loading...</Text>
@@ -30,7 +40,7 @@ export default ({proposal, solutionView, onClick}) => {
                 <Text weight={'bold'}>Prize Pool</Text>
                 <Text size={'small'} >{proposalData.value} (ETH)</Text>
                 <Text weight={'bold'}>Status</Text>
-                <Text size={'small'} >{proposal.status === "1" ? 'Active' : 'Completed'}</Text>
+                <Text size={'small'} >{statusText()}</Text>
             </Box>
             <Box align={'end'}>
                 <Text weight={'bold'}>Problem Type</Text>
