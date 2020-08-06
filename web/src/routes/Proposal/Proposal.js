@@ -30,11 +30,11 @@ const SolutionRow = ({solution, showDispute}) => {
 
     return <TableRow>
         {showCids && <OverflowTableCell scope={'row'}>{cid}</OverflowTableCell>}
-        {showCids && <OverflowTableCell scope={'row'}>{preprocessor}</OverflowTableCell>}
+        {showCids && preprocessor && <OverflowTableCell scope={'row'}>{preprocessor}</OverflowTableCell>}
         {!showCids && <TableCell scope={'row'}>
             <Button primary label={'Download'} onClick={() => downloadFile(cid, true)}/>
         </TableCell>}
-        {!showCids && <TableCell>
+        {!showCids && preprocessor && <TableCell>
             <Button primary label={'Download'} onClick={() => downloadFile(preprocessor, true)}/>
         </TableCell>}
         <TableCell scope={'row'}>{score}</TableCell>
@@ -62,10 +62,10 @@ const SolutionTable = ({solutions, title, description, emptyText, showDispute}) 
             <TableHeader>
                 <TableRow>
                     <TableCell scope="col" border="bottom">
-                        IPFS Model
+                        Model File
                     </TableCell>
                     <TableCell>
-                        IPFS Preprocessor
+                        Preprocessor Script
                     </TableCell>
                     <TableCell scope="col" border="bottom">
                         Accuracy Score

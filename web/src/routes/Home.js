@@ -52,6 +52,7 @@ const YourProposalsList = ({yourProposals, onClickProposal}) => {
             <Heading level={2}>
                 Your Submitted Proposals
             </Heading>
+            {!yourProposals.length && <Text weight={'bold'}>You haven't submitted any proposals!</Text>}
             {yourProposals.map(prop => <ProposalView proposal={prop} onClick={onClickProposal} solutionView/>)}
         </Box>
     </Box>
@@ -67,6 +68,7 @@ const ModelsList = ({submissions, onClickProposal}) => {
             <Heading level={2}>
                 Proposals With Your <br/> Submitted Models
             </Heading>
+            {!submissions.length && <Text weight={'bold'}>You haven't submitted any models!</Text>}
             {submissions.map(prop => <ProposalView proposal={prop} onClick={onClickProposal} solutionView/>)}
         </Box>
     </Box>
@@ -167,7 +169,7 @@ export default () => {
         <Header pad={'medium'} background={'light-3'}>
             <Box>
                 <HoverHeading onClick={() => changeView()} style={{cursor: "pointer"}}>
-                    <Box direction={'row'} align={'center'}>Incentivized Machine Learning.</Box>
+                    <Box direction={'row'} align={'center'}>Incentivized Machine Learning</Box>
                 </HoverHeading>
                 <SubText level={'4'}>Submit training data and a reward to receive trained prediction models.</SubText>
                 <SubText level={'4'}>Train a prediction model to receive a reward.</SubText>
