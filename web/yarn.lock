@@ -7360,9 +7360,9 @@ grommet-styles@^0.2.0:
   resolved "https://registry.yarnpkg.com/grommet-styles/-/grommet-styles-0.2.0.tgz#b2eac2b7e2747cb523434d21728ce5234f8ce4f4"
   integrity sha512-0OMSYuGeyifYKpg4Gv2HzL8rUdd0ddnJ5LbCBKgDuloC71XIwr9g/Fxa6rs737MbPV7OZ4pEm4wvrjH4epzf1A==
 
-"grommet@https://github.com/grommet/grommet/tarball/stable":
+"grommet@https://github.com/grommet/grommet/tarball/323cdbaddbea3563a0e3f88da4f81fe12e6a7840":
   version "2.14.0"
-  resolved "https://github.com/grommet/grommet/tarball/stable#aa1cb6a8b9321de25f78514e584a41a73daa5b2a"
+  resolved "https://github.com/grommet/grommet/tarball/323cdbaddbea3563a0e3f88da4f81fe12e6a7840#0181d44a6df26f58a25b66edba589ea3759cfd13"
   dependencies:
     grommet-icons "^4.2.0"
     hoist-non-react-statics "^3.2.0"
