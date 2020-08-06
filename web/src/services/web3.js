@@ -45,6 +45,10 @@ export const getEthAddress = async () => {
 
 export const getAddress = () => address
 
+export const getBalance = async () => {
+    return web3.utils.fromWei(await web3.eth.getBalance(getAddress()), 'ether')
+}
+
 export const getProposals = async () => {
     const proposalSize = await contract.methods.getProposalCount().call()
 

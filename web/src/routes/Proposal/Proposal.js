@@ -148,12 +148,12 @@ export default () => {
         <Header background={'light-3'} pad={'medium'}>
             <Box align={'start'}>
                 <Heading margin={'none'}>Proposal</Heading>
-                <Heading level={2}>{name}</Heading>
+                <Heading level={2} margin={'10px 0'}>{name}</Heading>
                 <Heading margin='none' level={4} textAlign={'left'}>{description}</Heading>
             </Box>
             <Box align={'end'} pad={'medium'}>
                 <Heading color={'neutral-2'} level={3} margin={'none'}>Bounty Value:</Heading>
-                <Heading color={'neutral-2'} level={3}>{value} ETH</Heading>
+                <Heading color={'neutral-2'} level={3} margin={'5px 0'}>{value} ETH</Heading>
                 <Text weight={'bold'}>Ends On: {(new Date(endDateMS)).toLocaleString()}</Text>
                 <Box height={'10px'} width={'10px'}/>
                 {hasEnded && <Button primary label={'End Proposal'} onClick={endProposal}/>}

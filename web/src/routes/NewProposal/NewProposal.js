@@ -38,7 +38,7 @@ export default () => {
     return <>
         <Form
             onSubmit={({value}) => onSubmit(value)}>
-            <Header background={'light-2'} pad={'medium'}>
+            <Header background={'light-3'} pad={'medium'}>
                 <Heading>Create a New Proposal</Heading>
                 <Button primary label={submitting ? 'Submitting...' : 'Submit'} type={'submit'} size={"large"}/>
             </Header>
