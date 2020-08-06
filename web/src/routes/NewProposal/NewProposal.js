@@ -5,6 +5,7 @@ import { uploadJSON } from '../../services/pinata'
 import { proposeCreate } from "../../services/web3"
 import { proposalToProblemSchema } from "../../utils"
 import IpfsUploader from '../../components/IpfsUploader'
+import BackArrow from "../../components/BackArrow"
 
 import styled from 'styled-components'
 import {Header, Heading, Box, Button, Form, TextInput, TextArea, FormField, Text, DateInput, Select} from "grommet"
@@ -42,6 +43,7 @@ export default () => {
                 <Heading>Create a New Proposal</Heading>
                 <Button primary label={submitting ? 'Submitting...' : 'Submit'} type={'submit'} size={"large"}/>
             </Header>
+            <BackArrow onClick={() => history.push('/')}/>
             <Box width={'100%'} direction={'row'} justify={'center'} margin={'10px'} gap={'large'}>
                 <Box align={'start'}>
                     <Box align={'center'} width={'100%'}>

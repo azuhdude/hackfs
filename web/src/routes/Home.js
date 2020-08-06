@@ -6,6 +6,7 @@ import { useHistory } from 'react-router-dom'
 import {getAddress, getProposals, getSolutionsForAddress} from '../services/web3'
 import styled from 'styled-components'
 import { useSearchParam } from 'react-use'
+import BackArrow from "../components/BackArrow"
 
 const HoverHeading = styled(Heading)`
     &:hover {
@@ -166,13 +167,14 @@ export default () => {
         <Header pad={'medium'} background={'light-3'}>
             <Box>
                 <HoverHeading onClick={() => changeView()} style={{cursor: "pointer"}}>
-                    <Box direction={'row'} align={'center'} gap={'small'}><Info size={'large'}/>Incentivized Machine Learning.</Box>
+                    <Box direction={'row'} align={'center'}>Incentivized Machine Learning.</Box>
                 </HoverHeading>
                 <SubText level={'4'}>Submit training data and a reward to receive trained prediction models.</SubText>
                 <SubText level={'4'}>Train a prediction model to receive a reward.</SubText>
             </Box>
             <Button primary label={'Submit a Proposal'} onClick={() => history.push('/newProposal')}/>
         </Header>
+        {currentView && <BackArrow onClick={() => changeView()}/>}
         {content}
     </>
 }

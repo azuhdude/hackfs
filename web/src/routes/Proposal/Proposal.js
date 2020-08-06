@@ -7,6 +7,7 @@ import { problemSchemaToProposal } from "../../utils"
 import IpfsUploader from '../../components/IpfsUploader'
 import { useHistory } from 'react-router-dom'
 import styled from 'styled-components'
+import BackArrow from "../../components/BackArrow"
 
 const OverflowTableCell = styled(TableCell)`
     overflow-x: auto;
@@ -145,7 +146,7 @@ export default () => {
     const hasEnded = endDateMS < Date.now()
 
     return <Box gap={'medium'}>
-        <Header background={'light-3'} pad={'medium'}>
+        <Header background={'light-3'} pad={'40px 10px 20px 10px'}>
             <Box align={'start'}>
                 <Heading margin={'none'}>Proposal</Heading>
                 <Heading level={2} margin={'10px 0'}>{name}</Heading>
@@ -159,6 +160,7 @@ export default () => {
                 {hasEnded && <Button primary label={'End Proposal'} onClick={endProposal}/>}
             </Box>
         </Header>
+        <BackArrow onClick={() => history.push('/')} />
         <Box direction={'row'}>
             <Box width={'50%'} align={'center'} gap={'medium'}>
                 <Box gap={'small'} pad={'0 20px'}>
