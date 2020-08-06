@@ -1,12 +1,13 @@
 import React, {useState } from 'react'
 import {useHistory} from 'react-router-dom'
 import { uploadFile } from "../../services/ipfs"
+import { uploadJSON } from '../../services/pinata'
 import { proposeCreate } from "../../services/web3"
 import { proposalToProblemSchema } from "../../utils"
 import IpfsUploader from '../../components/IpfsUploader'
 
 import styled from 'styled-components'
-import {Header, Heading, Box, Button, Form, TextInput, TextArea, FormField, Text, DateInput} from "grommet"
+import {Header, Heading, Box, Button, Form, TextInput, TextArea, FormField, Text, DateInput, Select} from "grommet"
 
 const LeftField = styled(FormField)`
     align-items: start;
@@ -26,7 +27,7 @@ export default () => {
 
         setSubitting(true)
         const schema = proposalToProblemSchema(submissionData)
-        const address = await uploadFile({content: JSON.stringify(schema)})
+        const address = await uploadJSON(JSON.stringify(schema))
         console.log(`submitted proposal address ${address}`)
         console.log('submitting proposal to contract', address, submissionData.value)
         await proposeCreate({address, value: submissionData.value, endDateMS: submissionData.endDateMS})
@@ -52,6 +53,17 @@ export default () => {
                     </LeftField>
                     <LeftField label={'Description'}>
                         <TextArea name={'description'} required/>
+                    </LeftField>
+                    <LeftField label={'Problem Type'}>
+                        <Select
+                            name={'problemType'}
+                            options={[
+                                'Regression',
+                                'Classification',
+                                'Image - Object Detection',
+                                'Image - Segmentation',
+                                'Image - Classification']}
+                        />
                     </LeftField>
                     <LeftField label={'End Date'}>
                         <DateInput

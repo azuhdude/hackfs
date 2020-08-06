@@ -132,7 +132,7 @@ export default () => {
     const yourSolutions = sortedSolutions.filter(solution => solution.owner === getAddress())
     const theirSolutions = sortedSolutions.filter(solution => solution.owner !== getAddress())
 
-    const isOwner = owner !== getAddress()
+    const isOwner = owner === getAddress()
 
     const hasEnded = endDateMS < Date.now()
 
@@ -165,7 +165,7 @@ export default () => {
 
             </Box>
             <Box width={'50%'} align={'center'} gap={'medium'}>
-                {!isOwner && <>
+                {!isOwner && !hasEnded && <>
                     <Box gap={'small'} width="600px" pad={'0 20px 10px 20px'}>
                         <Heading level={2} margin={'none'}>Model Submission</Heading>
                         <Text>Submit your trained model to claim part of this bounty</Text>
@@ -174,7 +174,7 @@ export default () => {
                         <Form onSubmit={({value}) => onSubmit(value)}>
                             <Box align={'start'}>
                                 <IpfsUploader name={'model'} label={'Model File'} required/>
-                                <IpfsUploader name={'preprocessor'} label={'Preprocessor Script'} required/>
+                                <IpfsUploader name={'preprocessor'} label={'Preprocessor Script'}/>
                                 <Box align={'start'} margin={'10px 0'} pad={'0 10px'}>
                                     <Text margin={'5px 0'}>Accuracy Score</Text>
                                     <FormField validate={(value, {accuracy}) => {

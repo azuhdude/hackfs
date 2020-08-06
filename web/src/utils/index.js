@@ -1,8 +1,9 @@
 export const proposalToProblemSchema = (data) => {
-    const {name, description, value, trainX, trainY, validateX, validateY, endDateMS, evaluation} = data
+    const {name, description, problemType, value, trainX, trainY, validateX, validateY, endDateMS, evaluation} = data
     return {
         name,
         bounty: value,
+        type: problemType,
         endDate: endDateMS,
         statement: {
             short: description
@@ -36,6 +37,7 @@ export const problemSchemaToProposal = (data) => {
         name: data.name,
         description: data.statement.short,
         endDateMS: data.endDate,
+        problemType: data.type,
         value: data.bounty,
         trainX: data.data.train.x.path,
         trainY: data.data.train.x.path,
