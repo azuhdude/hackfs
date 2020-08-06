@@ -1,11 +1,17 @@
 import ProposalView from "../components/ProposalView"
 import React, {useState, useEffect} from "react"
 import { Grid, Box, Heading, Header, Button, Text} from 'grommet'
-import { CircleQuestion, Cluster, Multiple } from 'grommet-icons'
+import { CircleQuestion, Cluster, Multiple, Info } from 'grommet-icons'
 import { useHistory } from 'react-router-dom'
 import {getAddress, getProposals, getSolutionsForAddress} from '../services/web3'
 import styled from 'styled-components'
 import { useSearchParam } from 'react-use'
+
+const HoverHeading = styled(Heading)`
+    &:hover {
+        color: #000;
+    }
+`
 
 const ProposalsList = ({activeProposals, inactiveProposals, onClickProposal}) => {
    return <Grid
@@ -116,6 +122,12 @@ export default () => {
     }
 
     const changeView = (view) => {
+        if (!view) {
+            if (currentView) {
+                history.push('/')
+            }
+            return
+        }
         history.push(`/?view=${view}`)
     }
 
@@ -155,7 +167,9 @@ export default () => {
     return <>
         <Header pad={'medium'} background={'light-3'}>
             <Box>
-                <Heading>Incentivized Machine Learning.</Heading>
+                <HoverHeading onClick={() => changeView()} style={{cursor: "pointer"}}>
+                    <Box direction={'row'} align={'center'} gap={'small'}><Info size={'large'}/>Incentivized Machine Learning.</Box>
+                </HoverHeading>
                 <SubText level={'4'}>Submit training data and a reward to receive trained prediction models.</SubText>
                 <SubText level={'4'}>Train a prediction model to receive a reward.</SubText>
             </Box>

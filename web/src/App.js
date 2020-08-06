@@ -20,6 +20,15 @@ const FloatingBalance = styled(Box)`
     right: 50px;
 `
 
+const Background = styled(Box)`
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: -1;
+`
+
 function App() {
     const [loading, setLoading] = useState(true)
 
@@ -38,6 +47,7 @@ function App() {
     return (
         <Grommet>
             <Main>
+                <Background background={'light-1'}/>
                 <Router>
                     <Switch>
                         <Route path={'/'}>
