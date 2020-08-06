@@ -9,6 +9,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@textile/powergate-client": "^0.2.0",
     "commander": "^6.0.0"
   }
 }
