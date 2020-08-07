@@ -151,9 +151,10 @@ contract ProposalContract {
 
     for (uint i = 0; i < proposals[ipfsDataAddress].solutionList.length; i++) {
       uint reward = (proposals[ipfsDataAddress].solutionList[i].perf * proposals[ipfsDataAddress].balance) / totalPerf;
-      // TODO: use the real solutions here since disputer will never be updated
-      if (proposals[ipfsDataAddress].solutionList[i].disputer == address(0)) {
-        proposals[ipfsDataAddress].solutionList[i].disputer.transfer(reward);
+      // "Real" solution used here, since disputer not available in solutionsList
+      address owner = proposals[ipfsDataAddress].solutionList[i].owner;
+      if (proposals[ipfsDataAddress].solutions[owner].disputer == address(0)) {
+        proposals[ipfsDataAddress].solutions[owner].disputer.transfer(reward);
       }
       else {
         proposals[ipfsDataAddress].solutionList[i].owner.transfer(reward);
