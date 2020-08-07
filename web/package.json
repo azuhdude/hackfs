@@ -8,7 +8,7 @@
     "@testing-library/react": "^9.3.2",
     "@testing-library/user-event": "^7.1.2",
     "@textile/hub": "^0.4.1",
-    "grommet": "https://github.com/grommet/grommet/tarball/323cdbaddbea3563a0e3f88da4f81fe12e6a7840",
+    "grommet": "https://github.com/grommet/grommet/tarball/50138ddef203cfcc77f6440280fcfb94ab2039a9",
     "grommet-icons": "^4.4.0",
     "informed": "^3.9.0",
     "ipfs": "^0.48.0",

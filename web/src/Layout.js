@@ -15,7 +15,7 @@ const BalanceBox = styled(Box)`
 `
 
 const FixedHeader = styled(Header)`
-    position: fixed;
+    position: absolute;
     width: 100%;
 `
 

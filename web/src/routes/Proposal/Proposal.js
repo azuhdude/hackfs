@@ -24,24 +24,39 @@ const DataField = ({label, value}) => {
     </Box>
 }
 
-const SolutionRow = ({solution, address}) => {
+const SolutionRow = ({solution, address, showDispute, onDisputed}) => {
     const { cid, score, expectedReward, preprocessor, disputed } = solution
     const [showCids, setShowCids] = useState(false)
+    const [disputing, setDisputing] = useState(false)
+
     const sendDispute = async (cid) => {
         console.log("Disputing solution")
-        const res = await disputeSolution(cid, solution.owner)
+        setDisputing(true)
+        onDisputed(await disputeSolution(cid, solution.owner))
+        setDisputing(false)
     }
+
+    let disputeLabel
+    if (disputing) {
+        disputeLabel = "Disputing..."
+    } else if (disputed) {
+        disputeLabel = "Verified"
+    } else {
+        disputeLabel = "Dispute"
+    }
+
+    const disputeDisabled = disputing || disputed
 
     // TODO: only show button if not owner
     return <TableRow>
         {showCids && <OverflowTableCell scope={'row'}>{cid}</OverflowTableCell>}
-        {showCids && preprocessor && <OverflowTableCell scope={'row'}>{preprocessor}</OverflowTableCell>}
+        {showCids && (preprocessor ? <OverflowTableCell scope={'row'}>{preprocessor}</OverflowTableCell> : <span/>)}
         {!showCids && <TableCell scope={'row'}>
             <Button primary label={'Download'} onClick={() => downloadFile(cid, true)}/>
         </TableCell>}
-        {!showCids && preprocessor && <TableCell>
+        {!showCids && (preprocessor ? <TableCell>
             <Button primary label={'Download'} onClick={() => downloadFile(preprocessor, true)}/>
-        </TableCell>}
+        </TableCell> : <span/>)}
         <TableCell scope={'row'}>{score}</TableCell>
         <TableCell>{expectedReward}</TableCell>
         <TableCell>
@@ -50,34 +65,30 @@ const SolutionRow = ({solution, address}) => {
                     primary
                     label={`${showCids ? 'Hide' : 'Show'} CIDs`}
                     onClick={() => setShowCids(!showCids)}/>
-            <Button size={"medium"} primary label={'Download'}/>
             <Box height={'10px'} width={'20px'}/>
-            <Button size={'medium'} primary label={disputed ? 'Disputed' : 'Dispute'} onClick={() => sendDispute(address)} disabled={disputed}/>
+            {(showDispute || disputed) && <Button size={'medium'} primary label={disputeLabel} onClick={() => sendDispute(address)} disabled={disputeDisabled}/>}
             </Box>
         </TableCell>
     </TableRow>
 }
 
 // TODO: implement
-const DisputeModal = (disputeWon) => {
-    const [show, setShow] = React.useState();
+const DisputeModal = ({result, onClose}) => {
     return (
-        <Box>
-          <Button label="show" onClick={() => setShow(true)} />
-          {show && (
-            <Layer
-              onEsc={() => setShow(false)}
-              onClickOutside={() => setShow(false)}
-            >   
-            { disputeWon ? <Text>You won the dispute. You will receive the funds from this solution.</Text> : <Text>You lost the dispute. You will not receive the funds from this solution.</Text> }
-              <Button label="close" onClick={() => setShow(false)} />
-            </Layer>
-          )}
-        </Box>
+        <Layer
+          onEsc={onClose}
+          onClickOutside={onClose}
+          pad={"medium"}
+        >
+            <Box pad={'medium'} gap={'medium'}>
+                { result ? <Text>You won the dispute. You will receive the funds from this solution.</Text> : <Text>You lost the dispute. You will not receive the funds from this solution.</Text> }
+                <Button label="close" onClick={onClose} primary/>
+            </Box>
+        </Layer>
       );
 }
 
-const SolutionTable = ({solutions, title, description, emptyText, address}) => {
+const SolutionTable = ({solutions, title, description, emptyText, address, onDisputed, showDispute}) => {
     return <Box gap={'small'} pad={'0 20px'} width={'600px'}>
         <Heading level={2} margin={'none'}>{title}</Heading>
         <Text>{description}</Text>
@@ -101,7 +112,7 @@ const SolutionTable = ({solutions, title, description, emptyText, address}) => {
                 </TableRow>
             </TableHeader>
             <TableBody>
-                {solutions.map(solution => <SolutionRow solution={solution} address={address}/>)}
+                {solutions.map(solution => <SolutionRow solution={solution} address={address} onDisputed={onDisputed} showDispute={showDispute}/>)}
             </TableBody>
         </Table>}
         {solutions.length === 0 && <Text weight={'bold'}>{emptyText}</Text>}
@@ -115,6 +126,7 @@ export default () => {
     const [proposal, setProposal] = useState(null)
     const [solutions, setSolutions] = useState([])
     const [contractProposal, setContractProposal] = useState(null)
+    const [disputeResult, setDisputeResult] = useState(-1)
 
     useEffect(() => {
         (async () => {
@@ -144,7 +156,7 @@ export default () => {
 
     if (loading) return <h1>Loading...</h1>
 
-    const { owner , status, endedOnMS } = contractProposal
+    const { sender , status } = contractProposal
     console.log('contract proposal', contractProposal)
 
     const { name, description, endDateMS, value, trainX, trainY, validateX, validateY, evaluation } = proposal
@@ -172,7 +184,7 @@ export default () => {
     const yourSolutions = sortedSolutions.filter(solution => solution.owner === getAddress())
     const theirSolutions = sortedSolutions.filter(solution => solution.owner !== getAddress())
 
-    const isOwner = owner === getAddress()
+    const isOwner = sender === getAddress()
 
     const hasEndedDate = endDateMS < Date.now()
     const hasEnded = status === "0"
@@ -180,7 +192,7 @@ export default () => {
     const reviewEnded = Date.now() - endDateMS > 30000
 
     return <Box gap={'medium'}>
-        {/* <DisputeModal disputeWon={false}></DisputeModal> */}
+        {disputeResult >= 0 && <DisputeModal result={disputeResult} onClose={() => window.location.reload()}/>}
         <Header background={'light-3'} pad={'40px 10px 20px 10px'}>
             <Box align={'start'}>
                 <Heading margin={'none'}>Proposal</Heading>
@@ -252,6 +264,8 @@ export default () => {
                         emptyText={'No solutions have been submitted yet!'}
                         solutions={theirSolutions}
                         address={address}
+                        showDispute
+                        onDisputed={setDisputeResult}
                     />
                 </>}
                 {isOwner && <SolutionTable
@@ -259,7 +273,9 @@ export default () => {
                     description={'Trained models submitted for your training proposal'}
                     emptyText={'No solutions have been submitted yet!'}
                     solutions={sortedSolutions}
+                    showDispute
                     address={address}
+                    onDisputed={setDisputeResult}
                 />}
                 <Box width={'20px'} height={'40px'}/>
             </Box>
