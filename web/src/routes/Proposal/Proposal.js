@@ -2,7 +2,8 @@ import { useParams } from 'react-router-dom'
 import { Layer, Header, Heading, Box, TextInput, Text, Button, Form, Table, TableHeader, TableBody, TableCell, TableRow, FormField } from 'grommet'
 import React, {useState, useEffect} from 'react'
 import { downloadFile } from '../../services/ipfs'
-import {getAddress, getProposalSubmissions, submitSolution, getProposal, endProposalDate, proposePayout, disputeSolution} from '../../services/web3'
+import {getAddress, getProposalSubmissions, submitSolution, getProposal,
+    endProposalDate, getDisputeStatus, proposePayout, disputeSolution} from '../../services/web3'
 import { problemSchemaToProposal } from "../../utils"
 import IpfsUploader from '../../components/IpfsUploader'
 import { useHistory } from 'react-router-dom'
@@ -32,7 +33,10 @@ const SolutionRow = ({solution, address, showDispute, onDisputed}) => {
     const sendDispute = async (cid) => {
         console.log("Disputing solution")
         setDisputing(true)
-        onDisputed(await disputeSolution(cid, solution.owner))
+        await disputeSolution(cid, solution.owner)
+        const result = await getDisputeStatus(cid, solution.owner)
+        console.log("DISPUTE RESULT", result)
+        onDisputed(result)
         setDisputing(false)
     }
 

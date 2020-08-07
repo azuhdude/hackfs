@@ -179,6 +179,18 @@ contract ProposalContract {
     return disputeWon;
   }
 
+  function getDisputeStatus(string memory ipfsDataAddress, address ownerAddress) public view returns(int) {
+    if ( !proposals[ipfsDataAddress].solutions[ownerAddress].disputed) {
+      return -1;
+    }
+
+    if (proposals[ipfsDataAddress].solutions[ownerAddress].disputer == msg.sender) {
+      return 1;
+    }
+
+    return 0;
+  }
+
   function _testEmptyString(string memory anyString) pure internal returns(bool) {
     bytes memory tempEmptyStringTest = bytes(anyString); // Uses memory
     if (tempEmptyStringTest.length == 0) {

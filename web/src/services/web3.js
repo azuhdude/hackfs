@@ -136,3 +136,13 @@ export const getSolutionsForAddress = async() => {
 
     return solutionProposals
 }
+
+export const getDisputeStatus = async(cid, owner) => {
+    const result = await contract.methods.getDisputeStatus(cid, owner).call()
+    if (result === -1) {
+        await new Promise(resolve => setTimeout(resolve, 1000))
+        return await getDisputeStatus(cid, owner)
+    }
+
+    return result
+}
