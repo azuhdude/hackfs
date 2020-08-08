@@ -1,5 +1,5 @@
 import ProposalView from "../components/ProposalView"
-import React, {useState, useEffect} from "react"
+import React, {useState, useEffect, useMemo} from "react"
 import { Grid, Box, Heading, Header, Button, Text} from 'grommet'
 import { CircleQuestion, Cluster, Multiple, Info } from 'grommet-icons'
 import { useHistory } from 'react-router-dom'
@@ -106,7 +106,12 @@ const ButtonControl = ({label, Icon, color, onClick}) => {
 }
 
 export default () => {
-    const currentView = useSearchParam('view')
+    const currentView = useMemo(() => {
+            return new URLSearchParams(window.location.search).get('view')
+        },
+        [window.location.search]
+    )
+
     const [proposals, setProposals] = useState([])
     const [solutions, setSolutions] = useState([])
 
