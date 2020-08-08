@@ -27,8 +27,12 @@ function App() {
 
     useEffect(() => {
         (async () => {
-            setHasContract(await getContractAddress())
-            await connect()
+            try {
+                await connect()
+                setHasContract(true)
+            } catch {
+                setHasContract(false)
+            }
             await connectIpfs()
             setLoading(false)
         })()
