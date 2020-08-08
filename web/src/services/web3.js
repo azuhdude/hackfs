@@ -1,16 +1,23 @@
 import Web3 from 'web3'
 import ProposalContract from '../contracts/ProposalContract'
 
+const ropstenAddress = '0x36edf8242eea9f67758f56127efa23391a9c4b05'
+
 export const ethEnabled = () => {
     return !!Web3.givenProvider
 }
 
 let web3, contract, address
 
-const getContractAddress = (currentNetwork, networkId) => {
+export const getContractAddress = async () => {
+    const currentNetwork = await web3.eth.net.getNetworkType()
+    const networkId = await web3.eth.net.getId()
+
     let networkKey
     if (currentNetwork === "private") {
         networkKey = networkId
+    } else if (currentNetwork === 'ropsten') {
+        return ropstenAddress
     }
     return ProposalContract.networks[networkKey].address
 }
@@ -22,11 +29,8 @@ export const connect = async () => {
         document.location.reload()
     })
 
-    const currentNetwork = await web3.eth.net.getNetworkType()
-    const networkId = await web3.eth.net.getId()
-
     await requestAccounts()
-    contract = new web3.eth.Contract(ProposalContract.abi, getContractAddress(currentNetwork, networkId), {
+    contract = new web3.eth.Contract(ProposalContract.abi, await getContractAddress(), {
         from: await getEthAddress()
     })
 }

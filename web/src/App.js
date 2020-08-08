@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { connect, getAddress, getBalance } from './services/web3'
+import { connect, getAddress, getBalance, getContractAddress } from './services/web3'
 import { connect as connect3Box, getClient } from './services/3box'
 import { connect as connectIpfs } from './services/ipfs'
 import './App.css';
@@ -23,14 +23,20 @@ const Background = styled(Box)`
 
 function App() {
     const [loading, setLoading] = useState(true)
+    const [hasContract, setHasContract] = useState(null)
 
     useEffect(() => {
         (async () => {
+            setHasContract(await getContractAddress())
             await connect()
             await connectIpfs()
             setLoading(false)
         })()
     }, [])
+
+    if (!hasContract) {
+        return <div>Must be on the Ropsten test network</div>
+    }
 
     if (loading) {
         return <div>Loading...</div>
